@@ -1,0 +1,63 @@
+{
+Realice un programa en el que 4 robots limpien de papeles el perímetro de un cuadrado de lado
+20 en sentido horario, como se muestra en la figura:
+}
+
+programa ejercicio2
+procesos
+  proceso recorrer
+  comenzar
+    repetir 10
+      mientras (HayPapelEnLaEsquina)
+        tomarPapel       
+      mover
+      
+    { Caso default }
+    mientras (HayPapelEnLaEsquina)
+      tomarPapel
+  fin
+areas
+  ciudad: AreaC (1,1,100,100)
+robots
+  robot robot1
+  comenzar
+    recorrer
+  fin
+  
+  robot robot2
+  comenzar
+    derecha
+    recorrer
+  fin
+  
+  robot robot3
+  comenzar
+    repetir 2
+      derecha
+    recorrer
+  fin
+  
+  robot robot4
+  comenzar
+    repetir 3
+      derecha
+    
+    recorrer
+  fin
+  
+variables
+  r1: robot1
+  r2: robot2
+  r3: robot3
+  r4: robot4
+
+comenzar
+  AsignarArea(r1, ciudad)
+  AsignarArea(r2, ciudad)
+  AsignarArea(r3, ciudad)
+  AsignarArea(r4, ciudad)
+  Iniciar(r1, 10, 10)
+  Iniciar(r2, 10, 20)
+  Iniciar(r3, 20, 20)
+  Iniciar(r4, 20, 10)
+fin
