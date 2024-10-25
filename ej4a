@@ -1,0 +1,149 @@
+{
+Analizar (no es necesario implementar) qué se debería modificar si ahora se pide que la
+ciudad se divida en 20 áreas:
+● Área 1: Avenidas 1 a 5
+● Área 2: Avenidas 6 a 10
+● …
+● Área 19: Avenidas 91 a 95
+● Área 20: Avenidas 96 a 100
+}
+
+programa ejercicio4a
+procesos
+  proceso limpiarFlores
+  comenzar
+    mientras (HayFlorEnLaEsquina)
+      tomarFlor
+  fin
+ 
+  proceso limpiarPapeles
+  comenzar
+    mientras (HayPapelEnLaEsquina)
+      tomarPapel
+  fin
+ 
+  proceso limpiarFloresRecorrido(E pasos: numero)
+  comenzar
+    repetir pasos
+      limpiarFlores
+      mover
+     
+    limpiarFlores
+  fin
+ 
+  proceso limpiarPapelesRecorrido(E pasos:numero)
+  comenzar
+    repetir pasos
+      limpiarPapeles
+      mover
+     
+    limpiarPapeles
+  fin
+ 
+  proceso limpiarPapelesArea(E maxCalles: numero; E maxAvenidas: numero)
+  variables
+    avActual: numero
+  comenzar
+    avActual := PosAv
+    repetir (maxAvenidas - 1)
+      Pos(avActual, 1)
+      limpiarPapelesRecorrido(maxCalles - 1)
+      avActual := avActual + 1
+    
+    Pos(avActual, 1)  
+    limpiarPapelesRecorrido (maxCalles - 1)
+  fin
+  
+  proceso limpiarFloresArea(E maxCalles: numero; E maxAvenidas: numero)
+  variables
+    avActual: numero
+  comenzar
+    avActual := PosAv
+    repetir (maxAvenidas - 1)
+      Pos(avActual, 1)
+      limpiarFloresRecorrido(maxCalles - 1)
+      avActual := avActual + 1
+     
+    Pos(avActual, 1) 
+    limpiarFloresRecorrido(maxCalles - 1)
+  fin
+  
+areas
+  area01: AreaP (1,1,5,100)
+  area02: AreaP (6,1,10,100)
+  area03: AreaP (11,1,15,100)
+  area04: AreaP (16,1,20,100)
+  area05: AreaP (21,1,25,100)
+  area06: AreaP (26,1,30,100)
+  area07: AreaP (31,1,35,100)
+  area08: AreaP (36,1,40,100)
+  area09: AreaP (41,1,45,100)
+  area10: AreaP (46,1,50,100)
+  area11: AreaP (51,1,55,100)
+  area12: AreaP (56,1,60,100)
+  area13: AreaP (61,1,65,100)
+  area14: AreaP (66,1,70,100)
+  area15: AreaP (71,1,75,100)
+  area16: AreaP (76,1,80,100)
+  area17: AreaP (81,1,85,100)
+  area18: AreaP (86,1,90,100)
+  area19: AreaP (91,1,95,100)
+  area20: AreaP (96,1,100,100)
+robots
+  robot robot1
+  variables
+    avenida: numero
+  comenzar
+    avenida := 1
+    repetir 9
+      Pos(avenida, 1)
+      limpiarPapelesArea(100, 5)
+      avenida := avenida + 10
+      
+    Pos(avenida,1)
+    limpiarPapelesArea(100, 5)
+  fin
+  
+  robot robot2
+  variables
+    avenida: numero
+  comenzar
+    avenida := 6
+    repetir 9
+      Pos(avenida, 1)
+      limpiarFloresArea(100, 5)
+      avenida := avenida + 10
+      
+    Pos(avenida, 1)
+    limpiarFloresArea(100, 5)
+  fin
+
+variables
+  r1: robot1
+  r2: robot2
+  
+comenzar
+  AsignarArea(r1, area01)
+  AsignarArea(r1, area03)
+  AsignarArea(r1, area05)
+  AsignarArea(r1, area07)  
+  AsignarArea(r1, area09)
+  AsignarArea(r1, area11)
+  AsignarArea(r1, area13)
+  AsignarArea(r1, area15)
+  AsignarArea(r1, area17)
+  AsignarArea(r1, area19)
+  AsignarArea(r2, area02)
+  AsignarArea(r2, area04)
+  AsignarArea(r2, area06)
+  AsignarArea(r2, area08)
+  AsignarArea(r2, area10)
+  AsignarArea(r2, area12)
+  AsignarArea(r2, area14)
+  AsignarArea(r2, area16)
+  AsignarArea(r2, area18)
+  AsignarArea(r2, area20)
+  
+  Iniciar(r1, 1,1)
+  Iniciar(r2, 6,1)
+fin
