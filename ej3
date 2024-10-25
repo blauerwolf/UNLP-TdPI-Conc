@@ -5,89 +5,87 @@ se posiciona en esa avenida y la recorre.}
 
 programa ejemplo
 procesos
-  proceso avanzar(E pasos; ES cumple: boolean)
+  proceso avanzar(E pasos: numero; ES cumple: boolean)
   variables
     flores: numero
     papeles: numero
   comenzar    
     repetir pasos
-      cumple := false
+      cumple := F
       flores := 0
       papeles := 0
       
       mientras (HayPapelEnLaEsquina)
         flores := flores + 1
-        juntarFlor
+        tomarPapel
         
       mientras (HayFlorEnLaEsquina)
         papeles := papeles + 1
-        juntarPapel
+        tomarFlor
         
       si (papeles - flores = 1)
-        cumple := true
+        cumple := V
         
       repetir papeles
         depositarPapel
         
       repetir flores
-        depositarFlor
+        depositarFlor 
         
-      
-      
+      mover   
   fin
   
-  proceso escalera(ES cantidadPapeles: numero)
+  proceso escalon(E pasos: numero; ES cumple: boolean)
+  comenzar
+    repetir 2
+      avanzar(pasos, cumple)
+      derecha
+
+  fin
+  
+  proceso escalera(ES cantEscalonesOK: numero)
   variables
     tamEscalon: numero
-    cantFlores: numero
-    cantPapeles: numero
-    
+    cumple: boolean  
     
   comenzar
     tamEscalon := 1
-    
-    cantPapelesSobreFlores := 0
-    cantFlores := 0
-    cantPapeles := 0
+    cantEscalonesOK := 0
     
     repetir 4
-      repetir tamEscalon
-        juntarPapeles
-        juntarFlores
-        if (cantPapeles - cantFlores = 1)
-          cantPapelesSobreFlores := cantPapelesSobreFlores + 1
-        depositarPapeles
-        depositarFlores
-        mover
+      cumple := F
+      escalon(tamEscalon, cumple)
       
-      derecha
-      
-      repetir tamEscalon
-        mover
-        
-      repetir 3
-        derecha
+      si (cumple)
+        cantEscalonesOK := cantEscalonesOK + 1
         
       tamEscalon := tamEscalon + 1
-    
-    
+      
+      repetir 2
+        derecha
+   
   fin
-  proceso recorrerAvenida(E numAv: numero)
-  comenzar
-    Pos(numAv, 1)
-    repetir 99
-      mover
-  fin
+ 
 areas
   ciudad: AreaC (1,1,100,100)
 robots
   robot robot1
+  variables
+    totalEscalones: numero
   comenzar
-    recorrerAvenida(1)
+    escalera(totalEscalones)
+    Informar('Escalores_papeles_supera_en_1_a_flores', totalEscalones)
   fin
+  
 variables
-  R_info: robot1
+  r1: robot1
+  r2: robot1
+  r3: robot1
 comenzar
-  AsignarArea(R_info, ciudad)
-  Iniciar(R_info, 1,1)
+  AsignarArea(r1, ciudad)
+  AsignarArea(r2, ciudad)
+  AsignarArea(r3, ciudad)
+  Iniciar(r1, 12, 14)
+  Iniciar(r2, 17, 10)
+  Iniciar(r3, 22, 6)
 fin
