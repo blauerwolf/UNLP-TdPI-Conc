@@ -1,0 +1,97 @@
+{
+
+}
+
+programa ejercicio4
+procesos
+  proceso limpiarFlores
+  comenzar
+    mientras (HayFlorEnLaEsquina)
+      tomarFlor
+  fin
+ 
+  proceso limpiarPapeles
+  comenzar
+    mientras (HayPapelEnLaEsquina)
+      tomarPapel
+  fin
+ 
+  proceso limpiarFloresRecorrido(E pasos: numero)
+  comenzar
+    repetir pasos
+      limpiarFlores
+      mover
+     
+    limpiarFlores
+  fin
+ 
+  proceso limpiarPapelesRecorrido(E pasos:numero)
+  comenzar
+    repetir pasos
+      limpiarPapeles
+      mover
+     
+    limpiarPapeles
+  fin
+ 
+  proceso limpiarPapelesArea(E maxCalles: numero; E maxAvenidas: numero)
+  variables
+    avActual: numero
+  comenzar
+    avActual := PosAv
+    repetir (maxAvenidas - 1)
+      Pos(avActual, 1)
+      limpiarPapelesRecorrido(maxCalles - 1)
+      avActual := avActual + 1
+    
+    Pos(avActual, 1)  
+    limpiarPapelesRecorrido (maxCalles - 1)
+  fin
+  
+  proceso limpiarFloresArea(E maxCalles: numero; E maxAvenidas: numero)
+  variables
+    avActual: numero
+  comenzar
+    avActual := PosAv
+    repetir (maxAvenidas - 1)
+      Pos(avActual, 1)
+      limpiarFloresRecorrido(maxCalles - 1)
+      avActual := avActual + 1
+     
+    Pos(avActual, 1) 
+    limpiarFloresRecorrido(maxCalles - 1)
+  fin
+  
+areas
+  area1: AreaC (1,1,25,100)
+  area2: AreaC (26,1,50,100)
+  area3: AreaC (51,1,75,100)
+  area4: AreaC (76,1,100,100)
+robots
+  robot robot1
+  comenzar
+    limpiarPapelesArea(100, 25)
+    Pos(51,1)
+    limpiarPapelesArea(100, 25)
+  fin
+  
+  robot robot2
+  comenzar
+    limpiarFloresArea(100, 25)
+    Pos(76, 1)
+    limpiarFloresArea(100, 25)
+  fin
+  
+variables
+  r1: robot1
+  r2: robot2
+  
+comenzar
+  AsignarArea(r1, area1)
+  AsignarArea(r1, area3)
+  AsignarArea(r2, area2)
+  AsignarArea(r2, area4)
+  
+  Iniciar(r1, 1,1)
+  Iniciar(r2, 26,1)
+fin
