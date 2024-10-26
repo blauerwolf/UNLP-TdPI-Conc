@@ -101,7 +101,7 @@ robots
 
     si (rmax > 0)
       Informar('Top de flores juntadas', f)
-      Informar('Robot ganador' rmax)
+      Informar('Robot ganador', rmax)
     sino
       Informar('No hay ganador', rmax)
 

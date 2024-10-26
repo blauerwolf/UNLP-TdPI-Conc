@@ -17,34 +17,38 @@ procesos
       mover
   fin
 
-  proceso evaluarGanador(E fR1, fR2, fR3, fR4, fR5, fR6: numero; ES ganador: numero)
+  proceso evaluarGanador(E fR1: numero; E fR2: numero; E fR3: numero; E fR4: numero; E fR5: numero; E fR6: numero; ES ganador: numero)
   variables 
     max: numero 
   comenzar 
     max := -1
-    si (fR1 > max)
-      max := fR1 
-      ganador := 1
-
-    si (fR2 > max)
-      max := fR2 
-      ganador := 2
-
-    si (fR3 > max)
-      max := fR3 
-      ganador := 3
-
-    si (fR4 > max) 
-      max := fR4 
-      ganador := 4
     
-    si (fR5 > max) 
-      max := fR5 
-      ganador := 5
+    si ((fR1 = fR2) & (fR2 = fR3) & (fR3 = fR4) & (fR4 = fR5) & (fR5 = fR6))
+      ganador := -1
+    sino
+      si (fR1 > max)
+        max := fR1 
+        ganador := 1
 
-    si (fR6 > max) 
-      max := fR6 
-      ganador := 6
+      si (fR2 > max)
+        max := fR2 
+        ganador := 2
+
+      si (fR3 > max)
+        max := fR3 
+        ganador := 3
+
+      si (fR4 > max) 
+        max := fR4 
+        ganador := 4
+    
+      si (fR5 > max) 
+        max := fR5 
+        ganador := 5
+
+      si (fR6 > max) 
+        max := fR6 
+        ganador := 6
       
   fin 
 
@@ -54,157 +58,186 @@ areas
 robots
   robot robot1 
   variables 
-    f: numero
+    f1, f2, f3, f4, f5, f6, fwin: numero
   comenzar 
-    recorrerAvenida(1, 1, 10, f)
-    {EnviarMensaje(f, r2)}
-    {RecibirMensaje(f, r2)}
-  fin
-
-  robot r2 
-  variables 
-    f: numero 
-  comenzar 
-    recorrerAvenida(2, 11, 20, f)
-  fin 
-
-  robot r3 
-  variables 
-    f: numero 
-  comenzar 
-    recorrerAvenida(3, 21, 30, f) 
-  fin 
-
-  robot r4 
-  variables 
-    f: numero 
-  comenzar 
-    recorrerAvenida(4, 31, 40, f)
-  fin 
-
-  robot r5 
-  variables 
-    f: numero 
-  comenzar 
-    recorrerAvenida(5, 41, 50, f) 
-  fin 
-
-  robot r6 
-  variables 
-    f: numero 
-  comenzar 
-    recorrerAvenida(6, 51, 60, f)
-  fin
-
-
-  robot juntador 
-  variables 
-    avIni, caIni, caFin, f, quien: numero
-  comenzar 
-    RecibirMensaje(quien, fiscalizador)
-    RecibirMensaje(avIni, fiscalizador)
-    RecibirMensaje(caIni, fiscalizador)
-    RecibirMensaje(caFin, fiscalizador)
-
-    recorrerAvenida(avIni, caIni, caFin, f)
-
-    EnviarMensaje(quien, fiscalizador)
-    EnviarMensaje(f, fiscalizador)
-  fin
-
-  robot jefe
-  variables
-    max, rmax, f, quien:numero
-  comenzar
-    max := 0
-    rmax := -1
-
-    EnviarMensaje(1, robot1)    { Quién es }
-    EnviarMensaje(1, robot1)    { Avenida inicial }
-    EnviarMensaje(1, robot1)    { Calle inicial }
-    EnviarMensaje(10, robot1)   { Calle final }
-
-    EnviarMensaje(2, robot2)    { Quién es }
-    EnviarMensaje(2, robot2)    { Avenida inicial }
-    EnviarMensaje(11, robot2)   { Calle inicial }
-    EnviarMensaje(20, robot2)   { Calle final }
-
-    EnviarMensaje(3, robot3)    { Quién es }
-    EnviarMensaje(3, robot3)    { Avenida inicial }
-    EnviarMensaje(21, robot3)   { Calle inicial }
-    EnviarMensaje(30, robot3)   { Calle final }
-
-    EnviarMensaje(4, robot4)    { Quién es }
-    EnviarMensaje(4, robot4)    { Avenida inicial }
-    EnviarMensaje(31, robot4)   { Calle inicial }
-    EnviarMensaje(40, robot4)   { Calle final }
-
-    EnviarMensaje(5, robot5)    { Quién es }
-    EnviarMensaje(5, robot5)    { Avenida inicial }
-    EnviarMensaje(41, robot5)   { Calle inicial }
-    EnviarMensaje(50, robot5)   { Calle final }
-
-    EnviarMensaje(6, robot6)    { Quién es }
-    EnviarMensaje(6, robot6)    { Avenida inicial }
-    EnviarMensaje(51, robot6)   { Calle inicial }
-    EnviarMensaje(60, robot6)   { Calle final }
-
-    repetir 6
-      RecibirMensaje(quien, *)
-      
-      si (quien = 1)
-        RecibirMensaje(f, robot1)
-      sino
-        si (quien = 2)
-          RecibirMensaje(f, robot2)
-        sino
-          si (quien = 3) 
-            RecibirMensaje(f, robot3)
-          sino
-            si (quien = 4)
-              RecibirMensaje(f, robot4) 
-            sino
-              si (quien = 5) 
-                RecibirMensaje(f, robot5)
-              sino
-                si (quien = 6) 
-                  RecibirMensaje(f, robot6)
-
-
-      si (f > max)
-        max := f 
-        rmax := quien 
-
-    si (rmax > 0)
-      Informar('Top de flores juntadas', f)
-    sino
-      Informar('No hay ganador', rmax)
-
+    recorrerAvenida(1, 1, 10, f1)
+    EnviarMensaje(f1, r2)
+    RecibirMensaje(f2, r2)
     
-  fin 
+    EnviarMensaje(f1, r3)
+    RecibirMensaje(f3, r3)
+    
+    EnviarMensaje(f1, r4)
+    RecibirMensaje(f4, r4)
+    
+    EnviarMensaje(f1, r5)
+    RecibirMensaje(f5, r5)
+    
+    EnviarMensaje(f1, r6)
+    RecibirMensaje(f6, r6)
+    
+    evaluarGanador(f1, f2, f3, f4, f5, f6, fwin)
+    
+    si (fwin < 0)
+      Informar('Sin ganadores', fwin)
+    sino
+      si (fwin = 1)
+        Informar('Gano el robotito', fwin) 
+
+  fin
+  
+  robot robot2 
+  variables 
+    f1, f2, f3, f4, f5, f6, fwin: numero
+  comenzar 
+    recorrerAvenida(2, 11, 20, f2)
+    EnviarMensaje(f2, r1)
+    RecibirMensaje(f1, r1)
+    
+    EnviarMensaje(f2, r3)
+    RecibirMensaje(f3, r3)
+    
+    EnviarMensaje(f2, r4)
+    RecibirMensaje(f4, r4)
+    
+    EnviarMensaje(f2, r5)
+    RecibirMensaje(f5, r5)
+    
+    EnviarMensaje(f2, r6)
+    RecibirMensaje(f6, r6)
+    
+    evaluarGanador(f1, f2, f3, f4, f5, f6, fwin)
+    
+    si (fwin = 2)
+      Informar('Gano el robotito', fwin)
+  fin
+  
+  robot robot3 
+  variables 
+    f1, f2, f3, f4, f5, f6, fwin: numero
+  comenzar 
+    recorrerAvenida(3, 21, 30, f3)
+    EnviarMensaje(f3, r1)
+    RecibirMensaje(f1, r1)
+    
+    EnviarMensaje(f3, r2)
+    RecibirMensaje(f2, r2)
+    
+    EnviarMensaje(f3, r4)
+    RecibirMensaje(f4, r4)
+    
+    EnviarMensaje(f3, r5)
+    RecibirMensaje(f5, r5)
+    
+    EnviarMensaje(f3, r6)
+    RecibirMensaje(f6, r6)
+    
+    evaluarGanador(f1, f2, f3, f4, f5, f6, fwin)
+    
+    si (fwin = 3)
+      Informar('Gano el robotito', fwin)
+  fin
+  
+  robot robot4 
+  variables 
+    f1, f2, f3, f4, f5, f6, fwin: numero
+  comenzar 
+    recorrerAvenida(4, 31, 40, f4)
+    EnviarMensaje(f4, r1)
+    RecibirMensaje(f1, r1)
+    
+    EnviarMensaje(f4, r2)
+    RecibirMensaje(f2, r2)
+    
+    EnviarMensaje(f4, r3)
+    RecibirMensaje(f3, r3)
+    
+    EnviarMensaje(f4, r5)
+    RecibirMensaje(f5, r5)
+    
+    EnviarMensaje(f4, r6)
+    RecibirMensaje(f6, r6)
+    
+    evaluarGanador(f1, f2, f3, f4, f5, f6, fwin)
+    
+    si (fwin = 4)
+      Informar('Gano el robotito', fwin)
+  fin
+  
+  robot robot5 
+  variables 
+    f1, f2, f3, f4, f5, f6, fwin: numero
+  comenzar 
+    recorrerAvenida(5, 41, 50, f5)
+    EnviarMensaje(f5, r1)
+    RecibirMensaje(f1, r1)
+    
+    EnviarMensaje(f5, r2)
+    RecibirMensaje(f2, r2)
+    
+    EnviarMensaje(f5, r3)
+    RecibirMensaje(f3, r3)
+    
+    EnviarMensaje(f5, r4)
+    RecibirMensaje(f4, r4)
+    
+    EnviarMensaje(f5, r6)
+    RecibirMensaje(f6, r6)
+    
+    evaluarGanador(f1, f2, f3, f4, f5, f6, fwin)
+    
+    si (fwin = 5)
+      Informar('Gano el robotito', fwin)
+  fin
+  
+  robot robot6 
+  variables 
+    f1, f2, f3, f4, f5, f6, fwin: numero
+  comenzar 
+    recorrerAvenida(6, 51, 60, f6)
+    EnviarMensaje(f6, r1)
+    RecibirMensaje(f1, r1)
+    
+    EnviarMensaje(f6, r2)
+    RecibirMensaje(f2, r2)
+    
+    EnviarMensaje(f6, r3)
+    RecibirMensaje(f3, r3)
+    
+    EnviarMensaje(f6, r4)
+    RecibirMensaje(f4, r4)
+    
+    EnviarMensaje(f6, r5)
+    RecibirMensaje(f5, r5)
+    
+    evaluarGanador(f1, f2, f3, f4, f5, f6, fwin)
+    
+    si (fwin = 6)
+      Informar('Gano el robotito', fwin)
+  fin
+
 
 variables
-  robot1: juntador
-  robot2: juntador
-  robot3: juntador 
-  robot4: juntador 
-  robot5: juntador 
-  robot6: juntador 
-  fiscalizador: jefe
+  r1: robot1 
+  r2: robot2 
+  r3: robot3 
+  r4: robot4
+  r5: robot5 
+  r6: robot6
 
 comenzar
-  AsignarArea(robot1, ciudad)
-  AsignarArea(robot2, ciudad)
-  AsignarArea(robot3, ciudad)
-  AsignarArea(robot4, ciudad)
-  AsignarArea(robot5, ciudad)
-  AsignarArea(robot6, ciudad)
-  AsignarArea(fiscalizador, ciudad)
-  Iniciar(robot1, 1,  1)
-  Iniciar(robot2, 2, 11)
-  Iniciar(robot3, 3, 21)
-  Iniciar(robot4, 4, 31)
-  Iniciar(robot5, 5, 41)
-  Iniciar(robot6, 6, 51)
-  Iniciar(fiscalizador, 2, 1)
+  AsignarArea(r1, ciudad)
+  AsignarArea(r2, ciudad)
+  AsignarArea(r3, ciudad)
+  AsignarArea(r4, ciudad)
+  AsignarArea(r5, ciudad)
+  AsignarArea(r6, ciudad)
+
+  Iniciar(r1, 1,  1)
+  Iniciar(r2, 2, 11)
+  Iniciar(r3, 3, 21)
+  Iniciar(r4, 4, 31)
+  Iniciar(r5, 5, 41)
+  Iniciar(r6, 6, 51)
+
 fin
