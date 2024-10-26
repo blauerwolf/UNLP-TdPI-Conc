@@ -1,0 +1,134 @@
+programa tp2_ej1c
+procesos
+  proceso juntarFlores(ES flores: numero)
+  comenzar
+    mientras (HayFlorEnLaEsquina)
+      tomarFlor
+      flores := flores + 1
+  fin
+
+  proceso recorrerAvenida(E avIni: numero; E caIni: numero; E caFin: numero; ES flores: numero)
+  comenzar
+    flores := 0
+    Pos(avIni, caIni)
+
+    repetir (caFin - caIni)
+      juntarFlores(flores)
+      mover
+  fin
+
+areas
+  ciudad: AreaC (1,1,100,100)
+
+robots
+  robot juntador 
+  variables 
+    avIni, caIni, caFin, f, quien: numero
+  comenzar 
+    RecibirMensaje(quien, fiscalizador)
+    RecibirMensaje(avIni, fiscalizador)
+    RecibirMensaje(caIni, fiscalizador)
+    RecibirMensaje(caFin, fiscalizador)
+
+    recorrerAvenida(avIni, caIni, caFin, f)
+
+    EnviarMensaje(quien, fiscalizador)
+    EnviarMensaje(f, fiscalizador)
+  fin
+
+  robot jefe
+  variables
+    max, rmax, f, quien:numero
+  comenzar
+    max := 0
+    rmax := -1
+
+    EnviarMensaje(1, robot1)    { Quién es }
+    EnviarMensaje(1, robot1)    { Avenida inicial }
+    EnviarMensaje(1, robot1)    { Calle inicial }
+    EnviarMensaje(10, robot1)   { Calle final }
+
+    EnviarMensaje(2, robot2)    { Quién es }
+    EnviarMensaje(2, robot2)    { Avenida inicial }
+    EnviarMensaje(11, robot2)   { Calle inicial }
+    EnviarMensaje(20, robot2)   { Calle final }
+
+    EnviarMensaje(3, robot3)    { Quién es }
+    EnviarMensaje(3, robot3)    { Avenida inicial }
+    EnviarMensaje(21, robot3)   { Calle inicial }
+    EnviarMensaje(30, robot3)   { Calle final }
+
+    EnviarMensaje(4, robot4)    { Quién es }
+    EnviarMensaje(4, robot4)    { Avenida inicial }
+    EnviarMensaje(31, robot4)   { Calle inicial }
+    EnviarMensaje(40, robot4)   { Calle final }
+
+    EnviarMensaje(5, robot5)    { Quién es }
+    EnviarMensaje(5, robot5)    { Avenida inicial }
+    EnviarMensaje(41, robot5)   { Calle inicial }
+    EnviarMensaje(50, robot5)   { Calle final }
+
+    EnviarMensaje(6, robot6)    { Quién es }
+    EnviarMensaje(6, robot6)    { Avenida inicial }
+    EnviarMensaje(51, robot6)   { Calle inicial }
+    EnviarMensaje(60, robot6)   { Calle final }
+
+    repetir 6
+      RecibirMensaje(quien, *)
+      
+      si (quien = 1)
+        RecibirMensaje(f, robot1)
+      sino
+        si (quien = 2)
+          RecibirMensaje(f, robot2)
+        sino
+          si (quien = 3) 
+            RecibirMensaje(f, robot3)
+          sino
+            si (quien = 4)
+              RecibirMensaje(f, robot4) 
+            sino
+              si (quien = 5) 
+                RecibirMensaje(f, robot5)
+              sino
+                si (quien = 6) 
+                  RecibirMensaje(f, robot6)
+
+
+      si (f > max)
+        max := f 
+        rmax := quien 
+
+    si (rmax > 0)
+      Informar('Top de flores juntadas', f)
+    sino
+      Informar('No hay ganador', rmax)
+
+    
+  fin 
+
+variables
+  robot1: juntador
+  robot2: juntador
+  robot3: juntador 
+  robot4: juntador 
+  robot5: juntador 
+  robot6: juntador 
+  fiscalizador: jefe
+
+comenzar
+  AsignarArea(robot1, ciudad)
+  AsignarArea(robot2, ciudad)
+  AsignarArea(robot3, ciudad)
+  AsignarArea(robot4, ciudad)
+  AsignarArea(robot5, ciudad)
+  AsignarArea(robot6, ciudad)
+  AsignarArea(fiscalizador, ciudad)
+  Iniciar(robot1, 1,  1)
+  Iniciar(robot2, 2, 11)
+  Iniciar(robot3, 3, 21)
+  Iniciar(robot4, 4, 31)
+  Iniciar(robot5, 5, 41)
+  Iniciar(robot6, 6, 51)
+  Iniciar(fiscalizador, 2, 1)
+fin
