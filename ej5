@@ -1,155 +1,63 @@
-{Bienvenidos al entorno CMRE.
-Lo siguiente es un código de ejemplo que implementa un
-proceso que recibe un número de avenida como parámetro,
-se posiciona en esa avenida y la recorre.}
-
-programa ejercicio5
+programa tp2_ej1
 procesos
   proceso juntarFlores(ES flores: numero)
   comenzar
     mientras (HayFlorEnLaEsquina)
-      flores := flores + 1
       tomarFlor
-  fin
-  
-  proceso juntarPapeles(ES papeles: numero)
-  comenzar
-    mientras (HayPapelEnLaEsquina)
-      papeles := papeles + 1
-      tomarPapel
-  fin
-  
-  proceso depositarFlores(E flores: numero)
-  comenzar
-    repetir flores
-      depositarFlor
-  fin
-  
-  proceso depositarPapeles(E papeles: numero)
-  comenzar
-    repetir papeles
-      depositarPapel
-  fin
-  
-  proceso recorrerYLimpiarFlores(E pasos:numero; E depositaInicio: boolean)
-  variables
-    flores: numero
-    avIni, caIni, avFin, caFin: numero
-    
-  comenzar
-    avIni := PosAv
-    caIni := PosCa
-    flores := 0
-    
-    repetir (pasos)
-      juntarFlores(flores) 
-      mover 
-      
-    juntarFlores(flores)
-    avFin := PosAv
-    caFin := PosCa 
-    
-    si (depositaInicio = V)
-      Pos(avIni, caIni)
-    sino
-      Pos(avFin, caFin)
-      
-    depositarFlores(flores)    
-  fin
-  
-  proceso recorrerYLimpiarPapeles(E pasos: numero; E depositaInicio: boolean)
-  variables
-    papeles: numero
-    avIni, caIni, avFin, caFin: numero
-    
-  comenzar
-    avIni := PosAv
-    caIni := PosCa
-    papeles := 0
-    
-    repetir (pasos)
-      juntarPapeles(papeles)
-      mover
-      
-    juntarPapeles(papeles)
-    avFin := PosAv
-    caFin := PosCa
-    
-    si (depositaInicio = V)
-      Pos(avIni, caIni)
-    sino
-      Pos(avFin, caFin)
-      
-    depositarPapeles(papeles) 
-  fin
-  
-  { limpiarAvenida recorre una avenida pudiendo seleccionar el modo
-    - modo = true: flores
-    - modo = false: papeles
-    y determinar si deposita al inicio o al final lo que haya recolectado
-  }
-  proceso limpiarAvenida(E avIni: numero; E caIni: numero; E pasos: numero; E modo: boolean; E depositaInicio: boolean)
-  comenzar
-    Pos(avIni, caIni)
-    si (modo)
-      recorrerYLimpiarFlores(pasos, depositaInicio)
-    sino
-      recorrerYLimpiarPapeles(pasos, depositaInicio)
-  fin
-  
-  proceso limpiarCalle(E avIni: numero; E caIni: numero; E pasos: numero; E modo: boolean; E depositaInicio: boolean)
-  comenzar
-    Pos(avIni, caIni)
-    si (modo)
-      recorrerYLimpiarFlores(pasos, depositaInicio)
-    sino
-      recorerYLimpiarPapeles(pasos, depositaInicio)
-  fin
-  
-areas
-  ciudad: AreaC (1,1,100,100)
-  
-robots
-  robot robot1
-  comenzar
-    derecha
-    limpiarCalle(1,75,15,V,F)
-    limpiarCalle(1,80,15,V,F)
-  fin
-  
-  robot robot2
-  comenzar
-    limpiarAvenida(75,80,20,F,V)
-    limpiarAvenida(80,80,20,F,V)
-  fin
-  
-  robot robot3
-  comenzar
-    derecha
-    limpiarCalle(70,10,30,V,F)
-    limpiarCalle(70,15,30,V,F)
-  fin
-  
-  robot robot4
-  comenzar
-    limpiarAvenida(10,1,10,F,V)
-    limpiarAvenida(15,1,10,F,V)
+      flores := flores + 1
   fin
 
+  proceso recorrerAvenida(E avIni: numero; E caIni: numero; E caFin: numero; ES flores: numero)
+  comenzar
+    flores := 0
+    Pos(avIni, caIni)
+
+    repetir (caFin - caIni)
+      juntarFlores(flores)
+      mover
+  fin
+
+areas
+  ciudad: AreaC (1,1,100,100)
+
+robots
+  robot robot1
+  variables
+    flores: numero
+    floresR2: numero
+  comenzar
+    recorrerAvenida(1, 1, 10, flores)
+    EnviarMensaje(flores, r2)
+    RecibirMensaje(floresR2, r2)
+
+    si (flores > floresR2)
+      Informar('Gano_R1', flores)
+  fin
+
+  robot robot2 
+  variables
+    flores: numero 
+    floresR1: numero
+  comenzar 
+    recorrerAvenida(2, 11, 20, flores)
+    EnviarMensaje(flores, r1)
+    RecibirMensaje(floresR1, r1)
+
+    si (flores > floresR1)
+      Informar('Gano_R2', flores)
+    sino
+      si (flores = floresR1)
+        Informar('Nadie gano', flores)
+
+  fin 
+
 variables
-  r1: robot1
-  r2: robot2
-  r3: robot3
-  r4: robot4
+  r1: robot1 
+  r2: robot2 
 
 comenzar
   AsignarArea(r1, ciudad)
   AsignarArea(r2, ciudad)
-  AsignarArea(r3, ciudad)
-  AsignarArea(r4, ciudad)
-  
-  Iniciar(r1, 1,75)
-  Iniciar(r2, 75,80)
-  Iniciar(r3, 70,10)
-  Iniciar(r4, 10,1)
+  Iniciar(r1, 1,  1)
+  Iniciar(r2, 2, 11)
 fin

@@ -1,0 +1,87 @@
+programa tp2_ej1b
+procesos
+  proceso juntarFlores(ES flores: numero)
+  comenzar
+    mientras (HayFlorEnLaEsquina)
+      tomarFlor
+      flores := flores + 1
+  fin
+
+  proceso recorrerAvenida(E avIni: numero; E caIni: numero; E caFin: numero; ES flores: numero)
+  comenzar
+    flores := 0
+    Pos(avIni, caIni)
+
+    repetir (caFin - caIni)
+      juntarFlores(flores)
+      mover
+  fin
+
+areas
+  ciudad: AreaC (1,1,100,100)
+
+robots
+  robot juntador 
+  variables 
+    avIni, caIni, caFin, f, quien: numero
+  comenzar 
+    RecibirMensaje(quien, robot3)
+    RecibirMensaje(avIni, robot3)
+    RecibirMensaje(caIni, robot3)
+    RecibirMensaje(caFin, robot3)
+
+    recorrerAvenida(avIni, caIni, caFin, f)
+
+    EnviarMensaje(quien, robot3)
+    EnviarMensaje(f, robot3)
+  fin
+
+  robot jefe
+  variables
+    max, rmax, f, quien:numero
+  comenzar
+    max := 0
+    rmax := -1
+
+    EnviarMensaje(1, robot1)    { Quién es }
+    EnviarMensaje(1, robot1)    { Avenida inicial }
+    EnviarMensaje(1, robot1)    { Calle inicial }
+    EnviarMensaje(10, robot1)   { Calle final }
+
+    EnviarMensaje(2, robot2)    { Quién es }
+    EnviarMensaje(2, robot2)    { Avenida inicial }
+    EnviarMensaje(11, robot2)   { Calle inicial }
+    EnviarMensaje(20, robot2)   { Calle final }
+
+    repetir 2
+      RecibirMensaje(quien, *)
+      si (quien = 1)
+        RecibirMensaje(f, robot1)
+      sino
+        RecibirMensaje(f, robot2)
+
+      si (f > max)
+        max := f 
+        rmax := quien 
+
+    si (rmax > 0)
+      Informar('Juntó mas', rmax)
+    sino
+      Informar('No hay ganador', rmax)
+
+    
+  fin 
+
+variables
+  robot1: juntador
+  robot2: juntador
+  robot3: jefe
+
+comenzar
+  AsignarArea(robot1, ciudad)
+  AsignarArea(robot2, ciudad)
+  AsignarArea(robot3, ciudad)
+  Iniciar(robot1, 1,  1)
+  Iniciar(robot2, 2, 11)
+  Iniciar(robot3, 2, 1)
+fin
