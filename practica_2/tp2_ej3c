@@ -1,6 +1,6 @@
 {
-  Modifique el programa anterior para que cada equipo repita el recorrido con las
-  siguientes 20 esquinas de sus correspondientes calles.
+  Analice (no es necesario implementar) cómo implementaría el inciso b si ahora cada
+  equipo debe realizar 8 segmentos de 20 esquinas.
 }
 programa ejercicio3
 procesos
