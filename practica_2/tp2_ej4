@@ -1,0 +1,214 @@
+programa ejemplo
+procesos
+  proceso juntarFlores(ES flores: numero)
+  comenzar
+    mientras (HayFlorEnLaEsquina)
+      tomarFlor
+      flores := flores + 1
+  fin
+ 
+  proceso juntarPapeles(ES papeles: numero)
+  comenzar
+    mientras (HayPapelEnLaEsquina)
+      tomarPapel
+      papeles := papeles + 1
+  fin
+ 
+  proceso limpiarEsquina(E av: numero; E ca: numero; ES flores: numero; ES papeles: numero)
+  comenzar
+    Pos(av, ca)
+    juntarPapeles(papeles)
+    juntarFlores(flores)
+  fin
+ 
+  proceso generarEsquina(ES av: numero; ES ca: numero)
+  variables
+    rav, rca: numero
+  comenzar
+    Random(rav, 25, 75)
+    Random(rca, 25, 75)
+    av := rav
+    ca := rca
+  fin
+ 
+  proceso despacharRobot
+  variables
+    aleatorio: numero
+  comenzar
+    Random(aleatorio, 1, 4)
+    
+    si (aleatorio = 1)
+      EnviarMensaje(V, r1)
+    si (aleatorio = 2)
+      EnviarMensaje(V, r2)
+    si (aleatorio = 3)
+      EnviarMensaje(V, r3)
+    si (aleatorio = 4)
+      EnviarMensaje(V, r4)
+  fin
+ 
+  proceso finalizarRonda
+  comenzar
+    EnviarMensaje(F, r1)
+    EnviarMensaje(F, r2)
+    EnviarMensaje(F, r3)
+    EnviarMensaje(F, r4)
+  fin
+ 
+  proceso inicializarRobots
+  comenzar
+    EnviarMensaje(1, r1)
+    EnviarMensaje(2, r2)
+    EnviarMensaje(3, r3)
+    EnviarMensaje(4, r4)
+  fin
+  
+  proceso finalizarPerdedores(E quien: numero)
+  comenzar
+    si (quien = 1)
+      EnviarMensaje(F, r2)
+      EnviarMensaje(F, r3)
+      EnviarMensaje(F, r4)
+    si (quien = 2)
+      EnviarMensaje(F, r1)
+      EnviarMensaje(F, r3)
+      EnviarMensaje(F, r4)
+    si (quien = 3)
+      EnviarMensaje(F, r1)
+      EnviarMensaje(F, r2)
+      EnviarMensaje(F, r4)
+    si (quien = 4)
+      EnviarMensaje(F, r1)
+      EnviarMensaje(F, r2)
+      EnviarMensaje(F, r3)
+  fin
+  
+  proceso moverGanador(E quien: numero)
+  comenzar
+    si (quien = 1)
+      repetir 2
+        EnviarMensaje(50, r1)
+    si (quien = 1)
+      repetir 2
+        EnviarMensaje(50, r2)
+    si (quien = 3)
+      repetir 2
+        EnviarMensaje(50, r3)
+    si (quien = 4)
+      repetir 2
+        EnviarMensaje(50, r4)
+  fin
+   
+areas
+  cuadrante: AreaPC(25, 25, 75, 75)
+  homeJefe: AreaP(1, 1, 1, 1)
+  homeR1: AreaP(25, 1, 25, 1)
+  homeR2: AreaP(30, 1, 30, 1)
+  homeR3: AreaP(35, 1, 35, 1)
+  homeR4: AreaP(40, 1, 40, 1)
+  
+robots
+
+  robot fiscalizador
+  variables
+    maxJunta, maxR: numero
+    flores, papeles: numero
+    quien: numero
+  comenzar
+    inicializarRobots
+    
+    { Maximo flores, papeles y robot todos en -1 }
+    maxJunta := -1
+    maxR := -1
+    
+    repetir 10
+      despacharRobot
+      
+      RecibirMensaje(quien, *)
+      si (quien = 1)
+        RecibirMensaje(flores, r1)
+        RecibirMensaje(papeles, r1)
+      si (quien = 2)
+        RecibirMensaje(flores, r2)
+        RecibirMensaje(papeles, r2)
+      si (quien = 3)
+        RecibirMensaje(flores, r3)
+        RecibirMensaje(papeles, r3)
+      si (quien = 4)
+        RecibirMensaje(flores, r4)
+        RecibirMensaje(papeles, r4)
+        
+      si (flores + papeles > maxJunta)
+        maxJunta := flores + papeles 
+        maxR := quien
+        
+      
+    finalizarRonda
+    { A esta altura, 'quien' es el robot que 'gano' }
+    
+    finalizarPerdedores(quien)
+    moverGanador(quien)
+    Informar(quien)
+  
+  fin
+  
+  robot recolector
+  variables
+    ingreso, gane: boolean
+    quien: numero
+    av, ca: numero
+    homeAv, homeCa: numero
+    flores, papeles: numero
+  comenzar
+    ingreso := V
+    gane := F
+    homeAv := PosAv
+    homeCa := PosCa  
+    flores := 0
+    papeles := 0 
+    
+    RecibirMensaje(quien, jefe)
+    
+    mientras (ingreso)
+      RecibirMensaje(ingreso, jefe)
+      generarEsquina(av, ca)
+      BloquearEsquina(av, ca)
+      Pos(av, ca)
+      limpiarEsquina(av, ca, flores, papeles)
+      Pos(homeAv, homeCa)
+      LiberarEsquina(av, ca)
+      EnviarMensaje(quien, jefe)
+      EnviarMensaje(flores, jefe)
+      EnviarMensaje(papeles, jefe)
+      
+    RecibirMensaje(gane, jefe)
+    si (gane)
+      RecibirMensaje(av, jefe)
+      RecibirMensaje(ca, jefe)
+      Pos(av, ca)
+  fin
+  
+variables
+  jefe: fiscalizador
+  r1: recolector
+  r2: recolector
+  r3: recolector
+  r4: recolector
+comenzar
+  AsignarArea(jefe, cuadrante)
+  AsignarArea(r1, cuadrante)
+  AsignarArea(r2, cuadrante)
+  AsignarArea(r3, cuadrante)
+  AsignarArea(r4, cuadrante)
+  AsignarArea(jefe, homeJefe)
+  AsignarArea(r1, homeR1)
+  AsignarArea(r2, homeR2)
+  AsignarArea(r3, homeR3)
+  AsignarArea(r4, homeR4)
+  
+  Iniciar(jefe, 1, 1)
+  Iniciar(r1, 25, 1)
+  Iniciar(r2, 30, 1)
+  Iniciar(r3, 35, 1)
+  Iniciar(r4, 40, 1)
+fin
