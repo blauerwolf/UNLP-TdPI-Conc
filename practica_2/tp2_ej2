@@ -1,0 +1,131 @@
+programa tp2_ej2
+procesos
+  
+  proceso juntarFlores(ES flores: numero)
+  comenzar
+    mientras (HayFlorEnLaEsquina)
+      tomarFlor
+      flores := flores + 1
+  fin
+  
+  proceso juntarPapeles(ES papeles: numero)
+  comenzar
+    mientras (HayPapelEnLaEsquina)
+      tomarPapel
+      papeles := papeles + 1
+  fin
+  
+  proceso escalonAleatorio(ES cumple: boolean)
+  variables 
+    aleatorio, flores papeles: numero
+  comenzar
+    
+    flores := 0
+    papeles := 0
+    cumple := F
+    
+    juntarFlores(flores)
+    juntarPapeles(papeles)
+    
+    mover
+    derecha
+    Random(aleatorio, 1, 5)
+      
+    repetir aleatorio
+      juntarFlores(flores)
+      juntarPapeles(papeles)
+      mover
+        
+    repetir 3
+      derecha
+      
+    si (flores > papeles)
+      cumple := V
+  fin
+  
+  proceso escalera(ES cantEscalones: numero)
+  variables
+    cumple: boolean
+  comenzar
+    cantEscalones := 0
+     
+    repetir 4
+      escalonAleatorio(cumple)
+      si (cumple)
+        cantEscalones := cantEscalones + 1
+  fin
+  
+areas
+  ciudad: AreaC (1,1,100,100)
+robots
+  robot jefe
+  variables
+    quien, escalones, suma: numero
+  comenzar
+  
+    suma := 0
+    
+    EnviarMensaje(1, r1)
+    EnviarMensaje(2, r1)
+    EnviarMensaje(1, r1)
+    
+    EnviarMensaje(2, r2)
+    EnviarMensaje(7, r2)
+    EnviarMensaje(1, r2)
+    
+    EnviarMensaje(3, r3)
+    EnviarMensaje(12, r3)
+    EnviarMensaje(1, r3)
+    
+    repetir 3
+      RecibirMensaje(quien, *)
+      si (quien = 1)
+        RecibirMensaje(escalones, r1)
+        suma := suma + escalones
+      sino
+        si (quien = 2)
+          RecibirMensaje(escalones, r2)
+          suma := suma + escalones
+        sino
+          si (quien = 3)
+            RecibirMensaje(escalones, r3)
+            suma := suma + escalones
+                 
+    Informar(suma)
+  
+  fin
+  
+  robot worker
+  variables
+    quien, avIni, caIni, papeles, flores, escalones: numero
+  comenzar
+    { Seteo inicial del robot }
+    RecibirMensaje(quien, boss)
+    RecibirMensaje(avIni, boss)
+    RecibirMensaje(caIni, boss)
+    
+    { Posiciono y ejecuto la escalera }
+    Pos(avIni, caIni)
+    escalera(escalones)
+    
+    EnviarMensaje(quien, boss)
+    EnviarMensaje(escalones, boss)
+  fin
+  
+  
+variables
+  boss: jefe
+  r1: worker
+  r2: worker
+  r3: worker
+comenzar
+  AsignarArea(r1, ciudad)
+  AsignarArea(r2, ciudad)
+  AsignarArea(r3, ciudad)
+  AsignarArea(boss, ciudad)
+  
+  Iniciar(r1, 2, 20)
+  Iniciar(r2, 7, 1)
+  Iniciar(r3, 12, 1)
+  Iniciar(boss, 1, 1)
+fin
