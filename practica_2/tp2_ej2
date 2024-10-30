@@ -1,3 +1,9 @@
+{
+  Nota: En vez de hacer ancho fijo de 1, hace alto fijo de 1
+  lo que genera a veces una colisión.
+  Ver la otra versión.
+  No olvidarse de llenar la ciudad de objetos para más emoción.
+}
 programa tp2_ej2
 procesos
   
