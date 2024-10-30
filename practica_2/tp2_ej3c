@@ -1,6 +1,6 @@
 {
   Analice (no es necesario implementar) cómo implementaría el inciso b si ahora cada
-  equipo debe realizar 8 segmentos de 20 esquinas.
+  equipo debe realizar 8 segmentos de 20 esquinas
 }
 programa ejercicio3
 procesos
@@ -46,65 +46,89 @@ procesos
 areas
   areaA11: AreaP(1, 1, 10, 1)
   areaA12: AreaP(21, 1, 30, 1)
+  areaA13: AreaP(41, 1, 50, 1)
+  areaA14: AreaP(61, 1, 70, 1)
+  
   areaA21: AreaP(11, 1, 20, 1)
   areaA22: AreaP(31, 1, 40, 1)
+  areaA23: AreaP(51, 1, 60, 1)
+  areaA24: AreaP(71, 1, 80, 1)
+  
   areaB11: AreaP(1, 5, 10, 5)
   areaB12: AreaP(21, 5, 30, 5)
+  areaB13: AreaP(41, 5, 50, 5)
+  areaB14: AreaP(61, 5, 70, 5)
+  
   areaB21: AreaP(11, 5, 20, 5)
   areaB22: AreaP(31, 5, 40, 5)
+  areaB23: AreaP(51, 5, 60, 5)
+  areaB24: AreaP(71, 5, 80, 5)
 robots
+
   robot teamA1
   variables
     papeles: numero
+    av: numero
   comenzar
     papeles := 0
+    av := 1
     derecha
-    recorrerCalleYJuntarPapeles(1, 1, 10, papeles)
-    EnviarMensaje(papeles, a2)
-    RecibirMensaje(papeles, a2)
-    recorrerCalleYJuntarPapeles(21, 1, 10, papeles)
-    EnviarMensaje(papeles, a2)
-  fin
-  
-  robot teamB1
-  variables
-    flores: numero
-  comenzar
-    flores := 0
-    derecha
-    recorrerCalleYJuntarFlores(1, 5, 10, flores)
-    EnviarMensaje(flores, b2)
-    RecibirMensaje(flores, b2)
-    recorrerCalleYJuntarFlores(21, 5, 10, flores)
-    EnviarMensaje(flores, b2)
+    
+    repetir 4
+      recorrerCalleYJuntarPapeles(av, 1, 10, papeles)
+      EnviarMensaje(papeles, a2)
+      RecibirMensaje(papeles, a2)
+      av := av + 20
   fin
   
   robot teamA2
   variables
     papeles: numero
+    av: numero
   comenzar
+    av := 11
     derecha
-    RecibirMensaje(papeles, a1)
-    recorrerCalleYJuntarPapeles(11, 1, 10, papeles)
-    EnviarMensaje(papeles, a1)
-    RecibirMensaje(papeles, a1)
-    recorrerCalleYJuntarPapeles(31, 1, 10, papeles)
+    
+    repetir 4
+      RecibirMensaje(papeles, a1)
+      recorrerCalleYJuntarPapeles(av, 1, 10, papeles)
+      EnviarMensaje(papeles, a1)
+      av := av + 20
+      
     Informar(papeles)
     
+  fin
+  
+  robot teamB1
+  variables
+    flores: numero
+    av: numero
+  comenzar
+    flores := 0
+    av := 1
+    derecha
+    repetir 4
+      recorrerCalleYJuntarFlores(av, 5, 10, flores)
+      EnviarMensaje(flores, b2)
+      RecibirMensaje(flores, b2)
+      av := av + 20
   fin
   
   robot teamB2
   variables
     flores: numero
+    av: numero
   comenzar
+    av := 11
     derecha
-    RecibirMensaje(flores, b1)
-    recorrerCalleYJuntarFlores(11, 5, 10, flores)
-    EnviarMensaje(flores, b1)
-    RecibirMensaje(flores, b1)
-    recorrerCalleYJuntarFlores(31, 5, 10, flores)
-    Informar(flores)
     
+    repetir 4
+      RecibirMensaje(flores, b1)
+      recorrerCalleYJuntarFlores(av, 5, 10, flores)
+      EnviarMensaje(flores, b1)
+      av := av + 20
+      
+    Informar(flores)
   fin
   
   
@@ -116,13 +140,20 @@ variables
 comenzar
   AsignarArea(a1, areaA11)
   AsignarArea(a1, areaA12)
+  AsignarArea(a1, areaA13)
+  AsignarArea(a1, areaA14)
   AsignarArea(a2, areaA21)
   AsignarArea(a2, areaA22)
+  AsignarArea(a2, areaA23)
+  AsignarArea(a2, areaA24)
   AsignarArea(b1, areaB11)
   AsignarArea(b1, areaB12)
+  AsignarArea(b1, areaB13)
+  AsignarArea(b1, areaB14)
   AsignarArea(b2, areaB21)
   AsignarArea(b2, areaB22)
-  
+  AsignarArea(b2, areaB23)  
+  AsignarArea(b2, areaB24)
   Iniciar(a1, 1, 1)
   Iniciar(a2, 11, 1)
   Iniciar(b1, 1, 5)
