@@ -39,12 +39,14 @@ procesos
     
     si (aleatorio = 1)
       EnviarMensaje(V, r1)
-    si (aleatorio = 2)
-      EnviarMensaje(V, r2)
-    si (aleatorio = 3)
-      EnviarMensaje(V, r3)
-    si (aleatorio = 4)
-      EnviarMensaje(V, r4)
+    sino
+      si (aleatorio = 2)
+        EnviarMensaje(V, r2)
+      sino 
+        si (aleatorio = 3)
+          EnviarMensaje(V, r3)
+        sino
+          EnviarMensaje(V, r4)
   fin
  
   proceso finalizarRonda
@@ -69,18 +71,20 @@ procesos
       EnviarMensaje(F, r2)
       EnviarMensaje(F, r3)
       EnviarMensaje(F, r4)
-    si (quien = 2)
-      EnviarMensaje(F, r1)
-      EnviarMensaje(F, r3)
-      EnviarMensaje(F, r4)
-    si (quien = 3)
-      EnviarMensaje(F, r1)
-      EnviarMensaje(F, r2)
-      EnviarMensaje(F, r4)
-    si (quien = 4)
-      EnviarMensaje(F, r1)
-      EnviarMensaje(F, r2)
-      EnviarMensaje(F, r3)
+    sino 
+      si (quien = 2)
+        EnviarMensaje(F, r1)
+        EnviarMensaje(F, r3)
+        EnviarMensaje(F, r4)
+      sino 
+        si (quien = 3)
+          EnviarMensaje(F, r1)
+          EnviarMensaje(F, r2)
+          EnviarMensaje(F, r4)
+        sino 
+          EnviarMensaje(F, r1)
+          EnviarMensaje(F, r2)
+          EnviarMensaje(F, r3)
   fin
   
   proceso moverGanador(E quien: numero)
@@ -145,7 +149,6 @@ robots
             RecibirMensaje(flores, r4)
             RecibirMensaje(papeles, r4)
         
-      Informar(flores, papeles)
       si ((flores + papeles) > maxJunta)
         maxJunta := flores + papeles 
         maxR := quien
@@ -202,6 +205,7 @@ variables
   r2: recolector
   r3: recolector
   r4: recolector
+  
 comenzar
   AsignarArea(jefe, cuadrante)
   AsignarArea(r1, cuadrante)
