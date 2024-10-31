@@ -1,0 +1,99 @@
+{
+  Version sin juntar nada
+}
+programa tp3_ejercicio4
+procesos
+  proceso izquierda
+  comenzar
+    repetir 3
+      derecha
+  fin
+  
+  proceso escalon(E h: numero; E aIzquierda: boolean; E bloquearUltimo: boolean)
+  comenzar
+    si (bloquearUltimo)
+      repetir h
+        mover
+      si (aIzquierda)
+        izquierda
+      sino    
+        derecha
+        
+      repetir (h - 1)
+        mover  
+          
+      si (aIzquierda)
+        BloquearEsquina(PosAv - 1, PosCa)
+        mover
+        izquierda
+      sino
+        BloquearEsquina(PosAv + 1, PosCa)
+        mover
+        derecha
+        
+    sino
+      repetir 2
+        repetir h
+          mover
+        si (aIzquierda)
+          izquierda
+        sino    
+          derecha 
+           
+    repetir 2
+      si (aIzquierda)
+        izquierda
+      sino
+        derecha
+  fin
+  
+  proceso escalera(E escalones: numero; E base: numero; E creciente: boolean; E aIzquierda: boolean; E bloquearUltimo: boolean)
+  variables
+    h: numero
+    paso: numero
+  comenzar
+    h := base
+    paso := 1
+    
+    si (creciente)
+      repetir escalones
+        escalon(h, aIzquierda, bloquearUltimo)
+        h := h + 1      
+    sino
+      repetir escalones   
+        escalon(h, aIzquierda, bloquearUltimo)
+        h := h - 1
+  fin
+  
+areas
+  ciudad: AreaC (1,1,100,100)
+robots
+  robot robot1
+  comenzar
+    escalera(5, 5, F, F, V)
+    izquierda
+    mover
+    { Desbloqueo la esquina comun }
+    LiberarEsquina(PosAv + 1, PosCa)
+    escalera(4, 2, V, F, F)
+  fin
+  
+  robot robot2
+  comenzar
+    escalera(5, 5, F, V, V)
+    derecha
+    mover
+    { Desbloqueo la esquina comun }
+    LiberarEsquina(PosAv - 1, PosCa)
+    escalera(4, 2, V, V, F)
+    
+  fin
+variables
+  r1: robot1
+  r2: robot2
+comenzar
+  AsignarArea(r1, ciudad)
+  AsignarArea(r2, ciudad)
+  Iniciar(r1, 1,1)
+  Iniciar(r2, 31, 1)
+fin
