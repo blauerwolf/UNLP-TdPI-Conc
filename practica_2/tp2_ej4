@@ -1,4 +1,4 @@
-programa ejemplo
+programa ejercicio4
 procesos
   proceso juntarFlores(ES flores: numero)
   comenzar
@@ -86,17 +86,22 @@ procesos
   proceso moverGanador(E quien: numero)
   comenzar
     si (quien = 1)
+      EnviarMensaje(V, r1)
       repetir 2
         EnviarMensaje(50, r1)
     si (quien = 1)
+      EnviarMensaje(V, r2)
       repetir 2
         EnviarMensaje(50, r2)
     si (quien = 3)
+      EnviarMensaje(V, r3)
       repetir 2
         EnviarMensaje(50, r3)
     si (quien = 4)
+      EnviarMensaje(V, r4)
       repetir 2
         EnviarMensaje(50, r4)
+        
   fin
    
 areas
@@ -128,17 +133,20 @@ robots
       si (quien = 1)
         RecibirMensaje(flores, r1)
         RecibirMensaje(papeles, r1)
-      si (quien = 2)
-        RecibirMensaje(flores, r2)
-        RecibirMensaje(papeles, r2)
-      si (quien = 3)
-        RecibirMensaje(flores, r3)
-        RecibirMensaje(papeles, r3)
-      si (quien = 4)
-        RecibirMensaje(flores, r4)
-        RecibirMensaje(papeles, r4)
+      sino
+        si (quien = 2)
+          RecibirMensaje(flores, r2)
+          RecibirMensaje(papeles, r2)
+        sino
+          si (quien = 3)
+            RecibirMensaje(flores, r3)
+            RecibirMensaje(papeles, r3)
+          sino
+            RecibirMensaje(flores, r4)
+            RecibirMensaje(papeles, r4)
         
-      si (flores + papeles > maxJunta)
+      Informar(flores, papeles)
+      si ((flores + papeles) > maxJunta)
         maxJunta := flores + papeles 
         maxR := quien
         
