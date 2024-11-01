@@ -1,0 +1,126 @@
+{
+    Realice un programa en el que 4 robots juegan una carrera por avenidas diferentes: 4, 6,
+    8 y 10 respectivamente. Todos los robots inician en la calle 1.
+    Para poder avanzar, cada robot debe juntar un papel de una fuente de papeles localizada
+    en la esquina (11,11), colocarlo en la esquina actual de su avenida y avanzar un paso.
+    Cuando la esquina fuente ya no tiene más papeles, o cuando se haya completado la
+    avenida, deberán avisar al robot coordinador y este determinará el robot que llegó más
+    lejos.
+}
+
+programa tp3_ej5
+procesos
+
+  proceso inicializarRobots
+  comenzar
+    EnviarMensaje(1, r1)
+    EnviarMensaje(2, r2)
+    EnviarMensaje(3, r3)
+    EnviarMensaje(4, r4)
+  fin
+  
+  proceso buscarPapel(ES exito: boolean)
+  variables
+    x, y: numero
+  comenzar
+    x := PosAv
+    y := PosCa
+    
+    { Bloqueo la esquina }
+    BloquearEsquina(11, 11)
+    Pos(11, 11)
+    si (HayPapelEnLaEsquina)
+      tomarPapel
+      exito := V
+    sino
+      exito := F
+      
+    Pos(x, y)
+    LiberarEsquina(11, 11)
+  fin
+
+areas
+  Avenida4: AreaP(4, 1, 4, 100)
+  Avenida6: AreaP(6, 1, 6, 100)
+  Avenida8: AreaP(8, 1, 8, 100)
+  Avenida10: AreaP(10, 1, 10, 100)
+  esquinaF: AreaC(11, 11, 11, 11)
+  esquinaJ: AreaP(12, 1, 12, 1)
+  
+robots
+  robot coordinador
+  variables
+    quien, maxCa, ca, maxR: numero
+  comenzar
+    maxCa := 0 { Calle a la que se llegó más lejos }
+    maxR := 0  { Robot que llegó mas lejos }
+    inicializarRobots
+    
+    repetir 4
+      RecibirMensaje(quien, *)
+      
+      si (quien = 1)
+        RecibirMensaje(ca, r1)
+      sino
+        si (quien = 2)
+          RecibirMensaje(ca, r2)
+        sino
+          si (quien = 3)
+            RecibirMensaje(ca, r3)
+          sino
+            RecibirMensaje(ca, r4)
+            
+      si (ca > maxCa)
+        maxCa := ca
+        maxR := quien
+        
+    Informar(maxR)
+  fin
+  
+  robot corredor
+  variables
+    quien, ca: numero
+    continuar: boolean
+  comenzar
+    { Inicializo variables }
+    continuar := V
+    
+    { Inicializo al robot }
+    RecibirMensaje(quien, jefe)
+    
+    mientras (PosCa < 100) & (continuar)
+      buscarPapel(continuar)
+      si (continuar)
+        mover
+        
+    { Aviso al jefe ... }
+    EnviarMensaje(quien, jefe)
+
+    { No me dejó usar EnviarMensaje(PosCa, jefe) }
+    ca := PosCa
+    EnviarMensaje(ca, jefe)
+  fin
+  
+variables
+  jefe: coordinador
+  r1: corredor
+  r2: corredor
+  r3: corredor
+  r4: corredor
+  
+comenzar
+  AsignarArea(r1, Avenida4)
+  AsignarArea(r2, Avenida6)
+  AsignarArea(r3, Avenida8)
+  AsignarArea(r4, Avenida10)
+  AsignarArea(r1, esquinaF)
+  AsignarArea(r2, esquinaF)
+  AsignarArea(r3, esquinaF)
+  AsignarArea(r4, esquinaF)
+  AsignarArea(jefe, esquinaJ)
+  Iniciar(r1, 4, 1)
+  Iniciar(r2, 6, 1)
+  Iniciar(r3, 8, 1)
+  Iniciar(r4, 10, 1)
+  Iniciar(jefe, 12, 1)
+fin
