@@ -8,40 +8,12 @@ procesos
     repetir 3
       derecha
   fin
-
-  proceso juntarFlores(ES flores: numero)
-  comenzar
-    mientras (HayFlorEnLaEsquina)
-      tomarFlor
-      flores := flores + 1
-  fin
-
-  proceso juntarPapeles(ES papeles: numero)
-  comenzar
-    mientras(HayPapelEnLaEsquina)
-      tomarPapel
-      papeles := papeles + 1
-  fin
-
-  proceso juntarObjetos(E queJunta: boolean; ES cantidad: numero)
-  comenzar 
-    si (queJunta) { Si es F juntara Flores, si es V juntara Papeles }
-      juntarPapeles(cantidad)
-    sino
-      juntarFlores(cantidad)
-  fin
   
-  proceso escalon(E h: numero; E aIzquierda: boolean; E bloquearUltimo: boolean; E queJunta: boolean; ES cantidad: numero)
+  proceso escalon(E h: numero; E aIzquierda: boolean; E bloquearUltimo: boolean)
   comenzar
-    { Aqui estoy en el primer vertice del escalon }
-    juntarObjetos(queJunta, cantidad)
-
     si (bloquearUltimo)
       repetir h
         mover
-
-      { Aqui estoy en el segundo vertice del escalon }
-      juntarObjetos(queJunta, cantidad)
       si (aIzquierda)
         izquierda
       sino    
@@ -58,9 +30,6 @@ procesos
         BloquearEsquina(PosAv + 1, PosCa)
         mover
         derecha
-
-      { Aqui estoy en el ultimo vertice del escalon }
-      juntarObjetos(queJunta, cantidad)
         
     sino
       repetir 2
@@ -69,13 +38,7 @@ procesos
         si (aIzquierda)
           izquierda
         sino    
-          derecha
-          
-        { Aqui estoy en el segundo vertice del escalon }
-        juntarObjetos(queJunta, cantidad)
-
-      { Aqui esto en el ultimo vertice del escalon }
-      juntarObjetos(queJunta, cantidad)
+          derecha 
            
     repetir 2
       si (aIzquierda)
@@ -84,104 +47,53 @@ procesos
         derecha
   fin
   
-  proceso escalera(E escalones: numero; E base: numero; E creciente: boolean; E aIzquierda: boolean; E bloquearUltimo: boolean; E queJunta:boolean; ES cantidad: numero)
+  proceso escalera(E escalones: numero; E base: numero; E creciente: boolean; E aIzquierda: boolean; E bloquearUltimo: boolean)
   variables
     h: numero
     paso: numero
   comenzar
     h := base
     paso := 1
-    cantidad := 0
     
     si (creciente)
       repetir escalones
-        escalon(h, aIzquierda, bloquearUltimo, queJunta, cantidad)
+        escalon(h, aIzquierda, bloquearUltimo)
         h := h + 1      
     sino
       repetir escalones   
-        escalon(h, aIzquierda, bloquearUltimo, queJunta, cantidad)
+        escalon(h, aIzquierda, bloquearUltimo)
         h := h - 1
   fin
   
 areas
   ciudad: AreaC (1,1,100,100)
 robots
-
   robot robot1
-  variables
-    flores, totFlores: numero
   comenzar
-    totFlores := 0
-    escalera(5, 5, F, F, V, F, flores)
-    totFlores := totFlores + flores
-
-    { Llegue a la esquina central }
-    EnviarMensaje(1, jefe)
-
+    escalera(5, 5, F, F, V)
     izquierda
     mover
-
     { Desbloqueo la esquina comun }
     LiberarEsquina(PosAv + 1, PosCa)
-
-    escalera(4, 2, V, F, F, F, flores)
-    totFlores := totFlores + flores
-
-    Informar(totFlores)
-    EnviarMensaje(1, jefe)
+    escalera(4, 2, V, F, F)
   fin
   
   robot robot2
-  variables
-    papeles, totPapeles: numero
   comenzar
-    totPapeles := 0
-    escalera(5, 5, F, V, V, V, papeles)
-    totPapeles := totPapeles + papeles
-
-    { Llegue a la esquina central }
-    EnviarMensaje(2, jefe)
-
+    escalera(5, 5, F, V, V)
     derecha
     mover
-
     { Desbloqueo la esquina comun }
     LiberarEsquina(PosAv - 1, PosCa)
-
-    escalera(4, 2, V, V, F, V, papeles)
-    totPapeles := totPapeles + papeles
-
-    Informar(totPapeles)
-    EnviarMensaje(2, jefe)
-  fin
-
-  robot fiscalizador
-  variables
-    primero: boolean
-    quien, ganador: numero
-  comenzar 
-    primero := F
-    ganador := -1
-
-    RecibirMensaje(quien, *)
-    si (~primero)
-      ganador := quien
-
-    repetir 2
-      RecibirMensaje(quien, *)
-
-    Informar(ganador)
-
+    escalera(4, 2, V, V, F)
+    
   fin
 variables
   r1: robot1
   r2: robot2
-  jefe: fiscalizador
 comenzar
   AsignarArea(r1, ciudad)
   AsignarArea(r2, ciudad)
-  AsignarArea(jefe, ciudad)
   Iniciar(r1, 1,1)
   Iniciar(r2, 31, 1)
-  Iniciar(jefe, 15, 1)
 fin

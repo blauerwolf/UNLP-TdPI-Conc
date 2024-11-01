@@ -7,8 +7,17 @@ terminan el jefe deberá informar cuál de ellos logró recoger más flores.
 Las esquinas de inicio de los robots deberán ser jefe (1,1) y robots (2,1), (3, 1), (4,1) y (5,1).
 }
 
-programa ejemplo
+programa tp3_ej3
 procesos
+
+  proceso traerPapel(ES exito: boolean)
+  comenzar
+    si (HayFlorEnLaEsquina)
+      tomarFlor
+      exito := V
+    sino
+      exito := F
+  fin
 
   proceso inicializarRobots
   comenzar
@@ -40,46 +49,80 @@ areas
   esqR3: AreaP(4,1,4,1)
   esqR4: AreaP(5,1,5,1)
   esqJ:  AreaP(1,1,1,1)
+  
 robots
-  robot jefe
+
+  robot fiscalizador
   variables
-    maxFlores, ganador: numero
+    maxFlores, flo, quien, ganador: numero
     av, ca: numero
   comenzar
     inicializarRobots
     maxFlores := -1
     ganador := -1
     
+    { Genero la esquina aleatoria }
     Random(av, 2, 10)
     Random(ca, 2, 10)
     
+    { Le aviso a los robots la posicion }
     avisarEsquina(av, ca)
     
+    repetir 4
+      RecibirMensaje(quien, *)
+      si (quien = 1)
+        RecibirMensaje(flo, r1)
+      sino
+        si (quien = 2)
+          RecibirMensaje(flo, r2)
+        sino 
+          si (quien = 3)
+            RecibirMensaje(flo, r3)
+          sino
+            RecibirMensaje(flo, r4)
+            
+      si (flo > maxFlores)
+        maxFlores := flo
+        ganador := quien
     
-    
-    
-    
-    
-    
-  
+    Informar("Gano", ganador)
   fin
   
-  robot fiscalizador
+  robot juntador
   variables
-    av, ca, quien: numero
-    continar: boolean
+    av, ca, quien, x, y, flores: numero
+    continuar: boolean
   comenzar
+    { Inicializo las variables }
+    continuar := V
+    x := PosAv
+    y := PosCa
+    flores := 0
+    
+    { Inicializo el robot }
     RecibirMensaje(quien, jefe)
-    continar := V
     
-    mientras(continuar)
-      repetir 2
-        RecibirMensaje(continuar, jefe)
-        RecibirMensaje(av, jefe)
-        RecibirMensaje(ca, jefe)
-
-
+    { Recibo en cuotas la posición de la esquina }
+    RecibirMensaje(av, jefe)
+    RecibirMensaje(ca, jefe)
     
+    mientras (continuar)
+      { Bloqueo esquina }
+      BloquearEsquina(10, 10)
+      
+      Pos(10, 10) 
+      
+      traerPapel(continuar)
+      
+      Pos(x, y)
+      LiberarEsquina(10, 10)
+      
+      si (continuar)
+        flores := flores + 1
+      
+    
+    EnviarMensaje(quien, jefe)
+    EnviarMensaje(flores, jefe)  
   fin
   
   
@@ -90,7 +133,6 @@ variables
   r3: juntador
   r4: juntador
 comenzar
-  AsignarArea(jefe, 1, 1)
   AsignarArea(r1, cuadrante)
   AsignarArea(r2, cuadrante)
   AsignarArea(r3, cuadrante)
