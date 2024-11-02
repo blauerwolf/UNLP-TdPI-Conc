@@ -1,0 +1,246 @@
+{
+    TODO: Control de colisiones
+}
+
+programa tp3_ej6a
+procesos
+
+  proceso inicializarRobots
+  comenzar
+    EnviarMensaje(1, r1)
+    EnviarMensaje(6, r1)
+    
+    EnviarMensaje(2, r2)
+    EnviarMensaje(10, r2)
+    
+    EnviarMensaje(3, r3)
+    EnviarMensaje(7, r3)
+  fin
+  
+  proceso juntarFlores(ES flores: numero)
+  comenzar
+    mientras (HayFlorEnLaEsquina)
+      tomarFlor
+      flores := flores + 1
+  fin
+  
+  proceso juntarPapeles(ES papeles: numero)
+  comenzar
+    mientras(HayPapelEnLaEsquina)
+      tomarPapel
+      papeles := papeles + 1
+  fin
+  
+  proceso juntarTodo(ES flores: numero; ES papeles: numero)
+  comenzar
+    juntarFlores(flores)
+    juntarPapeles(papeles)
+  fin
+  
+  proceso recorrerPerimetro(E lado: numero; E juntaF:boolean; E juntaP: boolean; ES flores: numero; ES papeles: numero)
+  variables
+    lado: numero
+  comenzar 
+    flores := 0
+    papeles := 0
+         
+    repetir 4
+      repetir lado
+        si (juntaF) & (juntaP)
+          juntarTodo(flores, papeles)
+        sino
+          si (juntaF)
+            juntarFlores(flores)
+          sino
+            juntarPapeles(papeles)
+        mover
+        
+      derecha
+  fin
+  
+  proceso recorrerCalle(E quien: numero; E calleInicial: numero)
+  variables
+    pos: numero
+  comenzar
+    Pos(1, calleInicial)
+    pos := 1
+    derecha
+    
+    
+    si (quien = 1)
+      { Deposita flores }
+      mientras (pos < 100) & (HayFlorEnLaBolsa)
+        depositarFlor
+        mover
+        pos := pos + 1
+          
+    sino
+      si (quien = 2)
+        { Deposita flor y papel }
+        mientras (pos < 100) & ((HayFlorEnLaBolsa) | (HayPapelEnLaBolsa))
+          si (HayFlorEnLaBolsa)
+            depositarFlor
+          si (HayPapelEnLaBolsa)
+            depositarPapel
+          mover
+          pos := pos + 1
+      sino
+        { Deposita papel }
+        mientras (pos < 100) & (HayPapelEnLaBolsa)
+          depositarPapel
+          mover
+          pos := pos + 1
+          
+    { Caso de borde para }
+    si (quien = 1)
+      si (HayFlorEnLaBolsa)
+        depositarFlor
+    sino
+      si (quien = 2)
+        si (HayFlorEnLaBolsa)
+          depositarFlor
+        si (HayPapelEnLaBolsa)
+          depositarPapel
+      sino
+        si (HayPapelEnLaBolsa)
+          depositarPapel
+      
+  fin
+  
+  proceso despacharRobot(E orden: numero; E quien: numero)
+  comenzar
+    si (orden = 1)
+      si (quien = 1)
+        EnviarMensaje(20, r1)
+      sino
+        si (quien = 2)
+          EnviarMensaje(20, r2)
+        sino
+          EnviarMensaje(20, r3)
+    sino
+      si (orden = 2)
+        si (quien = 1)
+          EnviarMensaje(21, r1)
+        sino
+          si (quien = 2)
+            EnviarMensaje(21, r2)
+          sino
+            EnviarMensaje(21, r3)
+      sino
+        si (quien = 1)
+          EnviarMensaje(22, r1)
+        sino
+          si (quien = 2)
+            EnviarMensaje(22, r2)
+          sino
+            EnviarMensaje(22, r3)
+  fin
+    
+areas
+  cuadrante: AreaC(2, 2, 16, 16)
+  calle20: AreaP(1, 20, 100, 20)
+  calle21: AreaP(1, 21, 100, 21)
+  calle22: AreaP(1, 22, 100, 22)
+  esquinaJ:  AreaP(1, 1, 1, 1)
+  
+robots
+  robot fiscalizador
+  variables
+    quien, orden, o1, q1, o2, q2, o3, q3: numero
+  comenzar
+    inicializarRobots
+    orden := 0
+    
+    { Recibo los avisos de finalizacion }
+    repetir 3
+      RecibirMensaje(quien, *)
+      orden := orden + 1
+      
+      si (orden = 1)
+        o1 := quien
+      sino 
+        si (orden = 2)
+          o2 := quien
+        sino
+          o3 := quien
+      
+    si (o1 = 1)
+      EnviarMensaje(20, r1)
+    sino
+      si (o1 = 2)
+        EnviarMensaje(20, r2)
+      sino
+        EnviarMensaje(20, r3)
+       
+    si (o2 = 1)
+      EnviarMensaje(21, r1)
+    sino
+      si (o2 = 2)
+        EnviarMensaje(21, r2)
+      sino
+        EnviarMensaje(21, r3)
+        
+    si (o3 = 1)
+      EnviarMensaje(22, r1)
+    sino
+      si (o3 = 2)
+        EnviarMensaje(22, r2)
+      sino
+        EnviarMensaje(22, r3)
+             
+  fin
+  
+  robot runner
+  variables
+    quien, lado, flores, papeles, ca: numero
+  comenzar 
+    flores := -1
+    papeles := 1
+    
+    { Inicializo el robot}
+    RecibirMensaje(quien, jefe)
+    RecibirMensaje(lado, jefe)
+    
+    { Recorro el perímetro }
+    si (quien = 1)
+      recorrerPerimetro(lado, V, F, flores, papeles)
+    sino 
+      si (quien = 2)
+        recorrerPerimetro(lado, V, V, flores, papeles)
+      sino
+        recorrerPerimetro(lado, F, V, flores, papeles)
+        
+    { Aviso al jefe ue terminé }    
+    EnviarMensaje(quien, jefe)
+    
+    { Recibo la calle a donde ir }
+    RecibirMensaje(ca, jefe)
+        
+    recorrerCalle(quien, ca)
+
+  fin
+  
+variables
+  jefe: fiscalizador
+  r1: runner
+  r2: runner
+  r3: runner
+comenzar
+  AsignarArea(r1, cuadrante)
+  AsignarArea(r2, cuadrante)
+  AsignarArea(r3, cuadrante)
+  AsignarArea(r1, calle20)
+  AsignarArea(r2, calle20)
+  AsignarArea(r2, calle20)
+  AsignarArea(r1, calle21)
+  AsignarArea(r2, calle21)
+  AsignarArea(r3, calle21)
+  AsignarArea(r1, calle22)
+  AsignarArea(r2, calle22)
+  AsignarArea(r3, calle22)
+  AsignarArea(jefe, esquinaJ)
+  Iniciar(r1, 2, 2)
+  Iniciar(r2, 5, 5)
+  Iniciar(r3, 9, 9)
+  Iniciar(jefe, 1, 1)
+fin
