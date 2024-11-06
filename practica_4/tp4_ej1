@@ -1,0 +1,174 @@
+programa tp4_ej1
+procesos
+ 
+  proceso juntarFlores
+  comenzar
+    mientras(HayFlorEnLaEsquina)
+      tomarFlor
+  fin
+
+  proceso juntarFloresYVolver
+  variables
+    av, ca: numero
+  comenzar 
+    av := PosAv 
+    ca := PosCa 
+    mover 
+    juntarFlores
+    Pos(av, ca)
+  fin
+  
+  proceso inicializarRobots
+  comenzar
+    EnviarMensaje(1, r1)
+    EnviarMensaje(2, r2)
+    EnviarMensaje(3, r3)
+  fin
+  
+  proceso enviarACK(E quien: numero)
+  comenzar
+    si (quien = 1)
+      EnviarMensaje(V, r1)
+    sino
+      si (quien = 2)
+        EnviarMensaje(V, r2)
+      sino
+        EnviarMensaje(V, r3)
+  fin
+
+  proceso solicitarFlores(E quien: numero; E av: numero; E ca: numero)
+  variables 
+    flw: numero
+  comenzar
+    Random(flw, 1, 4)
+    EnviarMensaje(quien, srv)
+    EnviarMensaje(flw, srv)
+    EnviarMensaje(av, srv)
+    EnviarMensaje(ca + 1, srv)
+  fin
+  
+areas
+  av1: AreaPC(1, 1, 1, 100)
+  av2: AreaPC(2, 1, 2, 100)
+  av3: AreaPC(3, 1, 3, 100)
+  eJ:  AreaP(100,100,100,100)
+
+robots
+
+  robot cliente
+  variables
+    quien, av, ca: numero
+    flores: numero
+    ACK: boolean
+  comenzar
+
+    { Identifico al robot }
+    RecibirMensaje(quien, srv)
+    
+    mientras (PosCa < 99)
+      av := PosAv 
+      ca := PosCa
+
+      { Solicito las flores y espero ACK }
+      solicitarFlores(quien, av, ca)
+      RecibirMensaje(ACK, srv)
+
+      { Junto las flores y vuelvo }
+      juntarFloresYVolver
+
+      
+      mientras (HayFlorEnLaBolsa) & (PosCa < 99)
+        depositarFlor
+        mover  
+      
+    si (HayFlorEnLaBolsa)
+      mover
+      depositarFlor
+    sino
+      solicitarFlores(quien, av, ca)
+      RecibirMensaje(ACK, srv) 
+      juntarFloresYVolver
+      mover 
+      depositarFlor
+      
+      
+    { Aviso al jefe que termine }
+    Informar('termine', quien)
+    EnviarMensaje(quien, srv)
+    EnviarMensaje(0, srv)    
+   
+  fin
+ 
+  robot servidor
+  variables
+    quien: numero
+    finalizados: numero
+    flores, av, ca: numero
+    continuar: boolean
+    
+  comenzar
+    { Para que funcione el código }
+    juntarFlores
+    
+    { Inicializo el contador de finalizados }
+    finalizados := 0
+    continuar := V
+    
+    { Identifico a los robots }
+    inicializarRobots
+    
+    { Gestiono pedido de flores }
+    mientras (continuar)
+      RecibirMensaje(quien, *)
+      si (quien = 1)
+        RecibirMensaje(flores, r1)
+        si (flores = 0)
+          finalizados :=  finalizados + 1
+          
+        RecibirMensaje(av, r1)
+        RecibirMensaje(ca, r1)
+      sino
+        si (quien = 2)
+          RecibirMensaje(flores, r2)
+          si (flores = 0)
+            finalizados :=  finalizados + 1
+          RecibirMensaje(av, r2)
+          RecibirMensaje(ca, r2)
+        sino
+          RecibirMensaje(flores, r3)
+          si (flores = 0)
+            finalizados :=  finalizados + 1
+          RecibirMensaje(av, r3)
+          RecibirMensaje(ca, r3)
+          
+      si (finalizados >= 4)
+        continuar := F
+        
+      Pos(av, ca)
+      repetir (flores)
+        depositarFlor
+      Pos(100, 100)
+      
+      { Envio el ACK }
+      enviarACK(quien)
+      
+    
+    
+  fin
+variables
+  srv: servidor
+  r1, r2, r3: cliente
+comenzar
+  AsignarArea(srv, eJ)
+  AsignarArea(srv, av1)
+  AsignarArea(srv, av2)
+  AsignarArea(srv, av3)
+  
+  AsignarArea(r1, av1)
+  AsignarArea(r2, av2)
+  AsignarArea(r3, av3)
+  Iniciar(srv, 100, 100)
+  Iniciar(r1, 1, 1)
+  Iniciar(r2, 2, 1)
+  Iniciar(r3, 3, 1)
+fin
