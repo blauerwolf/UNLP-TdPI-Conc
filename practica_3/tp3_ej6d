@@ -96,7 +96,7 @@ procesos
   
   proceso recorrerPerimetro(E lado: numero; E juntaF:boolean; E juntaP: boolean; ES flores: numero; ES papeles: numero)
   variables
-    lado, nxtAv, nxtCa, sentido, posIni: numero
+    lado, antAv, antCa, nxtAv, nxtCa, sentido, posIni: numero
     critico, esqBloqueada: boolean
   comenzar 
     flores := 0
@@ -115,11 +115,7 @@ procesos
     { Asumo, primer posicion de cada recorrido, segura }
     repetir 4
       repetir lado
-        { Si la posición anterior estaba bloqueada }
-        si (esqBloqueada)
-          LiberarEsquina(nxtAv, nxtCa)
-          esqBloqueada := F
-        
+            
         si (juntaF) & (juntaP)
           juntarTodo(flores, papeles)
         sino
@@ -135,9 +131,16 @@ procesos
         si (critico)
           BloquearEsquina(nxtAv, nxtCa)
           esqBloqueada := V
+        sino
+          si (esqBloqueada)
+            LiberarEsquina(antAv, antCa)
+            esqBloqueada := F
+          
         
         { Me muevo a la siguiente posición de forma segura }
         mover
+        antAv := nxtAv
+        antCa := nxtCa
         
       derecha
       sentido := sentido + 1 

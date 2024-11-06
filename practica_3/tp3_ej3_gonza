@@ -1,0 +1,123 @@
+programa tp3_ej3_Gonza
+procesos
+  
+  proceso juntarUnaFlor(E av: numero; E ca: numero; ES total: numero; ES termine: boolean)
+  variables
+    miAv, miCa: numero
+  comenzar
+    miAv := PosAv
+    miCa := PosCa
+    
+    BloquearEsquina(av, ca)
+    Pos(av, ca)
+    si (HayFlorEnLaEsquina)
+      tomarFlor
+      total := total + 1
+    sino
+      termine := V
+    
+    Pos(miAv, miCa)
+    LiberarEsquina(av, ca)
+  fin
+  
+  proceso actualizarMax(E id: numero; E flores: numero; ES idMax:numero; ES floresMax: numero)
+  comenzar
+    si (flores >= floresMax)
+      floresMax := flores
+      idMax := id
+    
+  fin
+  
+areas
+  AreaR1: AreaP(2, 1, 2, 1)
+  AreaR2: AreaP(3, 1, 3, 1)
+  AreaR3: AreaP(4, 1, 4, 1)
+  AreaR4: AreaP(5, 1, 5, 1)
+  AreaJefe: AreaP(1, 1, 1, 1)
+  Cuadrante: AreaPC(2, 2, 10, 10)
+  
+robots
+  robot robotJuntador
+  variables
+    totalFlores: numero
+    finalizar: boolean
+    av, ca: numero
+    id: numero
+  comenzar
+    finalizar := F
+    totalFlores := 0
+    
+    RecibirMensaje(id, robotJefe)
+    RecibirMensaje(av, robotJefe)
+    RecibirMensaje(ca, robotJefe)
+    
+    mientras (finalizar = F)
+      juntarUnaFlor(av, ca, totalFlores, finalizar)
+      
+    EnviarMensaje(id, robotJefe)
+    EnviarMensaje(totalFlores, robotJefe)
+      
+  fin
+  
+  robot jefe
+  variables
+    av, ca: numero
+    flores, floresMax: numero
+    id, idMax: numero
+  comenzar
+    
+    floresMax := -1
+    
+    Random(av, 2, 10)
+    Random(ca, 2, 10)
+    EnviarMensaje(1, r1)
+    EnviarMensaje(2, r2)
+    EnviarMensaje(3, r3)
+    EnviarMensaje(4, r4)
+    EnviarMensaje(av, r1)
+    EnviarMensaje(ca, r1)
+    EnviarMensaje(av, r2)
+    EnviarMensaje(ca, r2)
+    EnviarMensaje(av, r3)
+    EnviarMensaje(ca, r3)
+    EnviarMensaje(av, r4)
+    EnviarMensaje(ca, r4)
+    
+    repetir 4
+      RecibirMensaje(id, *)
+      si (id = 1)
+        RecibirMensaje(flores, r1)
+      sino
+        si (id = 2)
+          RecibirMensaje(flores, r2)
+        sino
+          si (id = 3)
+            RecibirMensaje(flores, r3)
+          sino
+            RecibirMensaje(flores, r4)
+            
+      actualizarMax(id, flores, idMax, floresMax)
+    
+    Informar(idMax)
+  fin
+  
+  
+variables
+  r1, r2, r3, r4: robotJuntador
+  robotJefe: jefe
+comenzar
+  AsignarArea(r1, AreaR1)
+  AsignarArea(r1, Cuadrante)
+  AsignarArea(r2, AreaR2)
+  AsignarArea(r2, Cuadrante)
+  AsignarArea(r3, AreaR3)
+  AsignarArea(r3, Cuadrante)
+  AsignarArea(r4, AreaR4)
+  AsignarArea(r4, Cuadrante)
+  AsignarArea(robotJefe, AreaJefe)
+  Iniciar(robotJefe, 1, 1)
+  Iniciar(r1, 2, 1)
+  Iniciar(r2, 3, 1)
+  Iniciar(r3, 4, 1)
+  Iniciar(r4, 5, 1)
+fin
