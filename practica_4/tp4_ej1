@@ -81,9 +81,10 @@ robots
         depositarFlor
         mover  
       
+    Informar('Salio del mientrXs', PosCa)
     si (HayFlorEnLaBolsa)
-      mover
       depositarFlor
+
     sino
       solicitarFlores(quien, av, ca)
       RecibirMensaje(ACK, srv) 
@@ -93,7 +94,6 @@ robots
       
       
     { Aviso al jefe que termine }
-    Informar('termine', quien)
     EnviarMensaje(quien, srv)
     EnviarMensaje(0, srv)    
    
@@ -132,16 +132,18 @@ robots
           RecibirMensaje(flores, r2)
           si (flores = 0)
             finalizados :=  finalizados + 1
+            
           RecibirMensaje(av, r2)
           RecibirMensaje(ca, r2)
         sino
           RecibirMensaje(flores, r3)
           si (flores = 0)
             finalizados :=  finalizados + 1
+            
           RecibirMensaje(av, r3)
           RecibirMensaje(ca, r3)
           
-      si (finalizados >= 4)
+      si (finalizados = 3)
         continuar := F
         
       Pos(av, ca)
