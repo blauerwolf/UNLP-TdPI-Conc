@@ -1,0 +1,112 @@
+programa tp4_ej2
+procesos
+  proceso juntarPapeles(E cantidad: numero; ES total: numero; ES ok: boolean)
+  comenzar 
+    mientras (HayPapelEnLaEsquina) & (total < cantidad)
+      tomarPapel 
+      total := total + 1
+       
+    si (total = 5)  
+      ok := V 
+    sino 
+      ok := F
+  fin
+
+  proceso trasladarPapeles(E av: numero; E ca: numero) 
+  comenzar 
+    BloquearEsquina(50, 50)
+    Pos(50, 50)
+
+    {
+    mientras (HayPapelEnLaBolsa)
+      depositarPapel
+    }
+
+    repetir 5
+      depositarPapel
+
+    Pos(av, ca)
+    LiberarEsquina(50, 50)
+  fin
+
+areas
+  Esq50: AreaPC(50, 50, 50, 50)
+  Av5: AreaP(5, 1, 5, 100)
+  Av10: AreaP(10, 1, 10, 100)
+  EsqC1: AreaP(11, 1, 11, 1)
+  EsqC2: AreaP(12, 1, 12, 1) 
+
+robots
+  robot productor
+  variables
+    av, ca, total: numero
+
+    ok: boolean
+  comenzar
+    total := 0
+
+    mientras (PosCa < 100)
+      av := PosAv
+      ca := PosCa
+
+      juntarPapeles(5, total, ok)
+
+      si (ok)
+        trasladarPapeles(av, ca)
+        total := 0
+     
+      mover
+
+    { Para la esquina 100 }
+    juntarPapeles(5, total, ok)
+    si (ok)
+      trasladarPapeles(av, ca)
+
+    
+  fin
+
+  robot consumidor 
+  variables
+    intentos, papeles, total, av, ca: numero
+    ok: boolean
+  comenzar
+    mientras (intentos < 8)
+      av := PosAv 
+      ca := PosCa
+      total := 0
+
+      Random(papeles, 2, 5)
+      BloquearEsquina(50, 50)
+      Pos(50, 50) 
+      juntarPapeles(papeles, total, ok)
+      si ~(ok)
+        intentos := intentos + 1
+        repetir total
+          depositarPapel 
+      sino 
+        intentos := 0
+      Pos(av, ca)
+      LiberarEsquina(50, 50)
+      
+      
+  fin
+
+
+variables
+  p1, p2: productor
+  c1, c2: consumidor
+comenzar
+  AsignarArea(p1, Av5)
+  AsignarArea(p2, Av10)
+  AsignarArea(p1, Esq50)
+  AsignarArea(p2, Esq50)
+  AsignarArea(c1, Esq50)
+  AsignarArea(c2, Esq50)
+  AsignarArea(c1, EsqC1)
+  AsignarArea(c2, EsqC2)
+  
+  Iniciar(p1, 5, 1)
+  Iniciar(p2, 10, 1)
+  Iniciar(c1, 11, 1)
+  Iniciar(c2, 12, 1)
+fin

@@ -1,0 +1,77 @@
+programa tp4_ej3
+procesos
+  proceso etapa(E paso: numero)
+  comenzar
+    paso := 0
+   
+    mientras (paso < 5) & (HayPapelEnLaEsquina) & (PosCa < 100)
+      tomarPapel
+      paso := paso + 1
+    mover
+      
+    si (PosCa = 100)
+      mientras (HayPapelEnLaEsquina)
+        tomarPapel
+      paso := paso + 1
+    
+  fin
+  
+  proceso finEtapa(E id: numero)
+  comenzar
+    si (id = 1)
+      EnviarMensaje(V, r2)
+      EnviarMensaje(V, r3)
+    sino
+      si (id = 2)
+        EnviarMensaje(V, r1)
+        EnviarMensaje(V, r3)
+      sino
+        EnviarMensaje(V, r1)
+        EnviarMensaje(V, r2)
+  fin
+  
+areas
+  Av1: AreaP(1, 1, 1, 100)
+  Av2: AreaP(2, 1, 2, 100)
+  Av3: AreaP(3, 1, 3, 100)
+  AJf: AreaP(100, 100, 100, 100)
+robots
+  robot limpiador
+  variables
+    id: numero
+    ACK: boolean
+    paso: numero
+  comenzar
+    RecibirMensaje(id, jefe)
+    
+    mientras (PosCa < 100)
+      Random(paso, 1, 5)
+      etapa(paso)
+      finEtapa(id)
+      repetir 2
+        RecibirMensaje(ACK, *)
+      
+    
+  fin
+  
+  robot coordinador
+  comenzar
+    EnviarMensaje(1, r1)
+    EnviarMensaje(2, r2)
+    EnviarMensaje(3, r3)
+  fin
+  
+variables
+  r1, r2, r3: limpiador
+  jefe: coordinador
+comenzar
+  AsignarArea(r1, Av1)
+  AsignarArea(r2, Av2)
+  AsignarArea(r3, Av3)
+  AsignarArea(jefe, AJf)
+  
+  Iniciar(jefe, 100,100)
+  Iniciar(r1, 1, 1)
+  Iniciar(r2, 2, 1)
+  Iniciar(r3, 3, 1)
+fin

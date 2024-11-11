@@ -1,0 +1,121 @@
+programa tp4_ej4
+procesos
+
+  proceso inicializarRobots
+  comenzar
+    EnviarMensaje(1, r1)
+    EnviarMensaje(2, r2)
+  fin
+  
+  proceso asignarTareas
+  variables
+    av, ca, tarea: numero
+  comenzar
+    Random(tarea, 1, 3)
+    Random(av, 2, 100)
+    Random(ca, 2, 100)
+    
+    EnviarMensaje(tarea, r1)
+    EnviarMensaje(av, r1)
+    EnviarMensaje(ca, r1)
+    
+    Random(tarea, 1, 3)
+    Random(av, 2, 100)
+    Random(ca, 2, 100)
+    
+    EnviarMensaje(tarea, r2)
+    EnviarMensaje(av, r2)
+    EnviarMensaje(ca, r2)  
+  fin
+  
+  proceso realizarTarea(E taskId: numero)
+  comenzar
+    si (taskId = 1)
+      mientras (HayFlorEnLaEsquina)
+        tomarFlor
+    sino
+      si (taskId = 2)
+        mientras(HayPapelEnLaEsquina)
+          tomarPapel
+      sino
+        si (taskId = 3)
+          mientras (HayFlorEnLaBolsa)
+            depositarFlor
+          mientras (HayPapelEnLaBolsa)
+            depositarPapel
+        sino
+          Informar('termine', V)
+  fin
+  
+areas
+  EJf: AreaP(1, 1, 1, 1)
+  ER1: AreaP(2, 1, 2, 1)
+  ER2: AreaP(3, 1, 3, 1)
+  cuadrante: AreaPC(2, 2, 100, 100)
+robots
+  robot coordinator
+  variables
+    tarea: numero
+    ACK: boolean
+  comenzar
+    inicializarRobots
+    
+    repetir 10
+      asignarTareas
+      
+      repetir 2
+        RecibirMensaje(ACK, *)
+    
+    EnviarMensaje(4, r1)
+    EnviarMensaje(4, r2)
+    
+  fin
+  
+  robot worker
+  variables
+    id: numero
+    tarea, av, ca, avAnt, caAnt: numero
+    bloqueado: boolean
+  comenzar
+    RecibirMensaje(id, jefe)
+    bloqueado := F
+    
+    
+    repetir 10
+      si (bloqueado)
+        LiberarEsquina(avAnt, caAnt)
+        bloqueado := F
+        
+      RecibirMensaje(tarea, jefe)
+      RecibirMensaje(av, jefe)
+      RecibirMensaje(ca, jefe)
+      
+      BloquearEsquina(av, ca)
+      Pos(av, ca)
+      realizarTarea(tarea)
+      avAnt := av
+      caAnt := ca
+      
+      EnviarMensaje(V, jefe)
+      
+    RecibirMensaje(tarea, jefe)
+      
+      
+    
+    
+  fin
+  
+variables
+  jefe: coordinator
+  r1, r2: worker
+comenzar
+  AsignarArea(r1, cuadrante)
+  AsignarArea(r2, cuadrante)
+  AsignarArea(jefe, EJf)
+  AsignarArea(r1, ER1)
+  AsignarArea(r2, ER2)
+  
+  Iniciar(jefe, 1, 1)
+  Iniciar(r1, 2, 1)
+  Iniciar(r2, 3, 1)
+fin
