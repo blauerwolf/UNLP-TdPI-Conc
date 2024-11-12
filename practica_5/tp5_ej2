@@ -85,15 +85,27 @@ robots
       finEtapa(id)
     etapa
     finEtapa(id)
+    
+    EnviarMensaje(V, jefe)
   fin
   
   robot fiscalizador
+  variables
+    ACK: boolean
+    f: numero
   comenzar
+    f := 0
+    
     EnviarMensaje(1, r1)
     EnviarMensaje(2, r2)
     EnviarMensaje(3, r3)
     
-    
+    repetir 3
+      RecibirMensaje(ACK, *)
+      
+    Pos(50, 50)
+    juntarF(f)
+    Informar(f)  
   fin
   
 variables
