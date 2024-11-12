@@ -1,0 +1,118 @@
+programa tp5_ej2
+procesos
+
+  proceso juntarF(ES flores: numero)
+  comenzar
+    mientras (HayFlorEnLaEsquina)
+      tomarFlor
+      flores := flores + 1
+  fin 
+
+  proceso juntarP(ES papeles: numero)
+  comenzar 
+    mientras (HayPapelEnLaEsquina)
+      tomarPapel
+      papeles := papeles + 1
+  fin
+
+  proceso etapa 
+  variables 
+    p, f, x, y: numero 
+  comenzar
+    f := 0
+    p := 0
+     
+    repetir 9
+      juntarF(f)
+      juntarP(p)
+      mover
+    juntarF(f)
+    juntarP(p)
+
+    x := PosAv 
+    y := PosCa
+    BloquearEsquina(50, 50)
+    Pos(50, 50)
+    repetir f
+      depositarFlor
+    repetir p 
+      depositarPapel
+    Pos(x, y)
+    LiberarEsquina(50, 50)
+  fin
+    
+  
+  proceso finEtapa(E id: numero)
+  variables 
+    ACK: boolean
+  comenzar
+    si (id = 1)
+      EnviarMensaje(V, r2)
+      EnviarMensaje(V, r3)
+      RecibirMensaje(ACK, *)
+      RecibirMensaje(ACK, *)
+    sino
+      si (id = 2)
+        EnviarMensaje(V, r1)
+        EnviarMensaje(V, r3)
+        RecibirMensaje(ACK, *)
+        RecibirMensaje(ACK, *)
+      sino
+        EnviarMensaje(V, r1)
+        EnviarMensaje(V, r2)
+        RecibirMensaje(ACK, *)
+        RecibirMensaje(ACK, *)
+  fin
+  
+areas
+  Esq50: AreaPC(50, 50, 50, 50)
+  Ca1: AreaP(1, 1, 100, 1)
+  Ca2: AreaP(1, 2, 100, 2)
+  Ca3: AreaP(1, 3, 100, 3)
+  EJf: AreaP(1, 4, 1, 4)
+  
+robots
+  robot recolector
+  variables
+    id, paso, ca: numero
+  comenzar
+    RecibirMensaje(id, jefe)
+    derecha
+
+    repetir 9 
+      etapa
+      mover
+      finEtapa(id)
+    etapa
+    finEtapa(id)
+  fin
+  
+  robot fiscalizador
+  comenzar
+    EnviarMensaje(1, r1)
+    EnviarMensaje(2, r2)
+    EnviarMensaje(3, r3)
+    
+    
+  fin
+  
+variables
+  r1, r2, r3: recolector
+  jefe: fiscalizador
+  
+comenzar
+  AsignarArea(jefe, EJf)
+  AsignarArea(r1, Ca1)
+  AsignarArea(r2, Ca2)
+  AsignarArea(r3, Ca3)
+  AsignarArea(r1, Esq50)
+  AsignarArea(r2, Esq50)
+  AsignarArea(r3, Esq50)
+  AsignarArea(jefe, Esq50)
+  
+  Iniciar(jefe, 1, 4)
+  Iniciar(r1, 1, 1)
+  Iniciar(r2, 1, 2)
+  Iniciar(r3, 1, 3)
+fin
+
