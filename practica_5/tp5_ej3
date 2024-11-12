@@ -10,3 +10,135 @@
     Los recolectores inician en la esquina (1,3) y (1,4), y el cosechador en la esquina (1,5)
 }
 
+programa tp5_ej3
+procesos
+  proceso juntarFlor(ES flo: numero)
+  comenzar
+    si (HayFlorEnLaEsquina)
+      tomarFlor
+      flo := flo + 1
+  fin
+  
+  proceso depositarFlores
+  comenzar
+    mientras (HayFlorEnLaBolsa)
+      depositarFlor
+  fin
+  
+areas 
+  Esq10: AreaPC(10, 10, 10, 10)
+  EsqCo: AreaP(1, 5, 1, 5)
+  Ca3: AreaP(1, 3, 100, 3)
+  Ca4: AreaP(1, 4, 100, 4)
+robots 
+  robot recolector
+  variables 
+    id, flores, esquinas: numero
+    av, ca: numero
+  comenzar 
+    RecibirMensaje(id, jefe)
+    
+    flores := 0
+    esquinas := 0
+    
+    derecha
+    mientras (PosAv < 100)
+      juntarFlor(flores)
+      mover
+      esquinas := esquinas + 1
+      
+      av := PosAv
+      ca := PosCa
+      
+      si (flores = 10) | (esquinas = 15)
+        BloquearEsquina(10, 10)
+        Pos(10, 10)
+        depositarFlores
+        Pos(av, ca)
+        LiberarEsquina(10, 10)
+        flores := 0
+        esquinas := 0
+        
+        EnviarMensaje(id, jefe)
+        EnviarMensaje(V, jefe)
+        
+    juntarFlor(flores)
+    esquinas := esquinas + 1
+    
+    si (flores = 10) | (esquinas = 15)
+      BloquearEsquina(10, 10)
+      Pos(10, 10)
+      depositarFlores
+      Pos(av, ca)
+      LiberarEsquina(10, 10)
+      flores := 0
+      esquinas := 0
+        
+      EnviarMensaje(id, jefe)
+      EnviarMensaje(V, jefe)
+      
+    
+    EnviarMensaje(id, jefe)
+    EnviarMensaje(F, jefe)
+  fin 
+
+  robot cosechador 
+  variables
+    id: numero 
+    terminados: numero
+    ACK: boolean
+    flores: numero
+  comenzar 
+    EnviarMensaje(1, r1)
+    EnviarMensaje(2, r2)
+    
+    terminados := 0
+    flores := 0
+    
+    mientras (terminados < 2)
+      RecibirMensaje(id, *)
+      si (id = 1)
+        RecibirMensaje(ACK, r1)
+        si ~(ACK)
+          terminados := terminados + 1
+        sino
+          BloquearEsquina(10, 10)
+          Pos(10, 10)
+          mientras (HayFlorEnLaEsquina)
+            tomarFlor 
+            flores := flores + 1
+          Pos(1, 5)
+          LiberarEsquina(10, 10)
+      sino
+        RecibirMensaje(ACK, r2)
+        si ~(ACK)
+          terminados := terminados + 1
+        sino
+          BloquearEsquina(10, 10)
+          Pos(10, 10)
+          mientras (HayFlorEnLaEsquina)
+            tomarFlor
+          Pos(1, 5)
+          LiberarEsquina(10, 10)
+    Informar(flores)
+      
+    
+    
+  fin 
+
+variables 
+  r1, r2: recolector 
+  jefe: cosechador 
+
+comenzar 
+  AsignarArea(jefe, EsqCo)
+  AsignarArea(jefe, Esq10)
+  AsignarArea(r1, Esq10)
+  AsignarArea(r2, Esq10)
+  AsignarArea(r1, Ca3)
+  AsignarArea(r2, Ca4)
+
+  Iniciar(jefe, 1, 5)
+  Iniciar(r1, 1, 3)
+  Iniciar(r2, 1, 4)
+fin
