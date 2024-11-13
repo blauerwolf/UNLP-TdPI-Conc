@@ -1,0 +1,258 @@
+programa ex05
+procesos
+  proceso juntarFlores(ES flo: numero)
+  comenzar
+    mientras(HayFlorEnLaEsquina)
+      tomarFlor
+      flo := flo + 1
+  fin
+  
+  proceso izquierda
+  comenzar
+    repetir 3
+      derecha
+  fin
+  
+areas
+  AC: AreaPC(20, 20, 20, 20)
+  EF: AreaP(20, 18, 20, 18)
+  
+  AAz1: AreaP(9, 19, 19, 19)
+  AAz2: AreaPC(9, 20, 19, 20)
+  AAz3: AreaP(9, 21, 19, 21)
+  
+  ARj1: AreaP(21, 19, 31, 19)
+  ARj2: AreaPC(21, 20, 31, 20)
+  ARj3: AreaP(21, 21, 31, 21)
+  
+robots
+  robot AzulCentral
+  variables
+    ok: boolean
+    flo: numero
+    av, ca: numero
+   
+  comenzar
+    flo := 0
+    
+    derecha
+    
+    repetir 10
+      RecibirMensaje(ok, a1)
+      RecibirMensaje(ok, a3)
+      mover
+      juntarFlores(flo)
+
+      
+    RecibirMensaje(ok, a1)
+    RecibirMensaje(ok, a3)
+    juntarFlores(flo)
+    
+    av := PosAv
+    ca := PosCa
+    
+    repetir flo
+      BloquearEsquina(20, 20)
+      Pos(20, 20)
+      depositarFlor
+      Pos(av, ca)
+      LiberarEsquina(20, 20)
+      
+    EnviarMensaje(1, jefe)
+    EnviarMensaje(flo, jefe)
+     
+  fin
+  
+  robot AzulLateral
+  variables
+    flo: numero
+    av, ca: numero
+  comenzar
+    derecha
+    
+    repetir 10
+      mover
+      av := PosAv
+      ca := PosCa
+      flo := 0
+      juntarFlores(flo)
+      
+      repetir flo
+        BloquearEsquina(av, 20)
+        Pos(av, 20)
+        depositarFlor
+        Pos(av, ca)
+        LiberarEsquina(av, 20)
+         
+      EnviarMensaje(V, a2)
+      
+    av := PosAv
+    ca := PosCa
+    flo := 0
+    juntarFlores(flo)
+    
+    repetir flo
+      BloquearEsquina(av, 20)
+      Pos(av, 20)
+      depositarFlor
+      Pos(av, ca)
+      LiberarEsquina(av, 20)
+      
+    EnviarMensaje(V, a2)
+      
+  fin
+  
+  robot RojoCentral
+  variables
+    ok: boolean
+    flo: numero
+    av, ca: numero
+    
+  comenzar
+    flo := 0
+    
+    izquierda
+    
+    repetir 10
+      RecibirMensaje(ok, r1)
+      RecibirMensaje(ok, r3)
+      mover
+      juntarFlores(flo)
+      
+    RecibirMensaje(ok, r1)
+    RecibirMensaje(ok, r3)
+    juntarFlores(flo)
+    
+    av := PosAv
+    ca := PosCa
+    
+    repetir flo
+      BloquearEsquina(20, 20)
+      Pos(20, 20)
+      depositarFlor
+      Pos(av, ca)
+      LiberarEsquina(20, 20)
+      
+    EnviarMensaje(2, jefe)
+    EnviarMensaje(flo, jefe)
+  fin
+  
+  robot RojoLateral
+  variables
+    flo: numero
+    av, ca: numero
+  comenzar
+    
+    izquierda
+    
+    repetir 10
+      mover
+      av := PosAv
+      ca := PosCa
+      flo := 0
+      juntarFlores(flo)
+      
+      repetir flo
+        BloquearEsquina(av, 20)
+        Pos(av, 20)
+        depositarFlor
+        Pos(av, ca)
+        LiberarEsquina(av, 20)
+         
+      EnviarMensaje(V, r2)
+      
+    av := PosAv
+    ca := PosCa
+    flo := 0
+    juntarFlores(flo)
+    
+    repetir flo
+      BloquearEsquina(av, 19)
+      Pos(av, 19)
+      depositarFlor
+      Pos(av, ca)
+      LiberarEsquina(av, 19)
+      
+    EnviarMensaje(V, r2)
+      
+  fin
+  
+  robot fiscalizador
+  variables
+    flo, maxFlo, equipo, maxEquipo, primero: numero
+    finalizados: numero
+    ok: boolean
+  comenzar
+    maxFlo := -1
+    maxEquipo := -1
+    finalizados := 0
+    
+    repetir 2
+      RecibirMensaje(equipo, *)
+      finalizados := finalizados + 1
+      
+      si (finalizados = 1)
+        primero := equipo
+        
+      si (equipo = 1)
+        RecibirMensaje(flo, a2)
+        si (flo > maxFlo)
+          maxFlo := flo
+          maxEquipo := equipo
+      sino
+        RecibirMensaje(flo, r2)
+        si (flo > maxFlo)
+          maxFlo := flo
+          maxEquipo := equipo
+          
+    si (primero = 1)
+      Informar('Gano el equipo azul', primero)
+    sino
+      Informar('Gano el equipo rojo', primero)
+      
+    si (maxEquipo = 1)
+      Informar('Recolecto mas el equipo azul', maxEquipo)
+    sino
+      Informar('Recolecto mas el equipo rojo', maxEquipo)
+    
+    
+  fin
+  
+variables
+  a1, a3: AzulLateral
+  a2: AzulCentral
+  r1, r3: RojoLateral
+  r2: RojoCentral
+  jefe: fiscalizador
+  
+comenzar
+  AsignarArea(a1, AAz1)
+  AsignarArea(a1, AAz2)
+  
+  AsignarArea(a2, AAz2)
+  AsignarArea(a2, AC)
+  
+  AsignarArea(a3, AAz3)
+  AsignarArea(a3, AAz2)
+  
+  AsignarArea(r1, ARj1)
+  AsignarArea(r1, ARj2)
+  
+  AsignarArea(r2, ARj2)
+  AsignarArea(r2, AC)
+  
+  AsignarArea(r3, ARj3)
+  AsignarArea(r3, ARj2)
+  
+  AsignarArea(jefe, EF)
+  
+  Iniciar(jefe, 20, 18)
+  
+  Iniciar(a1, 9, 19)
+  Iniciar(a2, 9, 20)
+  Iniciar(a3, 9, 21)
+  
+  Iniciar(r1, 31, 19)
+  Iniciar(r2, 31, 20)
+  Iniciar(r3, 31, 21)
+fin
