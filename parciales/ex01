@@ -1,0 +1,204 @@
+{
+    Cuatro robots deben jugar una carrera en dos etapas (clasificación y final). Los robots comienzan en (1, 1), (1, 2), (1, 3) y (1, 4), esquinas en donde aprovechan a vacias sus bolsas (que podrían estar llenas de flores y papeles). Al finalizar la carrera, los cuatro robots deben volver a su esquina de inicio.
+
+    La primera etapa de la carrera (la clasificación) va desde la avenida 2 hasta la avenida 20, cada uno de los robos hará el recorrido sobre la calle en la cual comienza y consiste en lo siguiente:
+        a) Todos los robots deben comenzar al mismo tiempo recorriendo su calle juntando solo una flo rpor esquina (si hubiera)
+        b) Al llegar al final de recorrido deberán dejar todas las flores juntadas en (1,6). Las flores deben ser depositadas de a una.
+        c) Los dos robots que vacíen primero su bolsa pasan a la final 
+
+    Finalizada la primera etapa se da comienzo a la segunda (la final) que va desde la avenida 20 hasta la avenida 2, cada uno de los dos robots finalizastas hará el recorrido sobre su misma calle y consiste en lo siguiente:
+        a) Ambos finalistas deben comenzar al mismo tiempo recorriendo s calle juntando solo un papel por esquina (si hubiera)
+        b) Al llegar al final de la calle deberán dejar todos los papeles juntados en (1, 6). Los papeles deben ser depositados de a uno.
+        c) El robot que vacíe primero su bolsa es el ganador.
+
+    El comiendo de la carrera, la determinación de los finalistas, el comienzo de la segunda etapa y el informar quién es el robot ganador son tareas de un robot fiscalizador que estará ubicado en (1, 5)
+}
+
+programa ex1
+procesos
+  proceso enviarACK(E id: numero; E ACK: boolean)
+  comenzar 
+    si (id = 1)
+      EnviarMensaje(ACK, r1)
+    sino 
+      si (id = 2)
+        EnviarMensaje(ACK, r2)
+      sino 
+        si (id = 3)
+          EnviarMensaje(ACK, r3)
+        sino 
+          EnviarMensaje(ACK, r4)
+
+  fin
+
+
+areas 
+  Esq1: AreaP(1, 1, 1, 1)
+  Esq2: AreaP(1, 2, 1, 2)
+  Esq3: AreaP(1, 3, 1, 3)
+  Esq4: AreaP(1, 4, 1, 4)
+
+  Esq5: AreaP(1, 5, 1, 5)
+  Esq6: AreaPC(1, 6, 1, 6)
+
+  ETa: AreaP(2, 1, 20, 1) 
+  ETb: AreaP(2, 2, 20, 2)
+  ETc: AreaP(2, 3, 20, 3)
+  ETd: AreaP(2, 4, 20, 4)
+
+ 
+robots 
+  robot fiscalizador
+  variables 
+    posiciones: numero
+    pri, seg, ter, cua: numero
+    id: numero
+  comenzar 
+
+    posiciones := 0
+
+    EnviarMensaje(1, r1)
+    EnviarMensaje(2, r2)
+    EnviarMensaje(3, r3)
+    EnviarMensaje(4, r4)
+
+
+    EnviarMensaje(V, r1)
+    EnviarMensaje(V, r2)
+    EnviarMensaje(V, r3)
+    EnviarMensaje(V, r4)
+
+    repetir 4
+      RecibirMensaje(id, *)
+      posiciones := posiciones + 1
+
+      si (posiciones = 1)
+        pri := id  
+      sino 
+        si (posiciones = 2)
+          seg := id
+        sino
+          si (posiciones = 3)
+            ter := id 
+          sino
+            si (posiciones = 4) 
+              cua := id
+          
+    Informar('primero', pri)
+    Informar('segundo', seg)
+    Informar('tercero', ter)
+    Informar('cuarto', cua)
+    enviarACK(ter, F)
+    enviarACK(cua, F)
+    enviarACK(pri, V)
+    enviarACK(seg, V)
+
+    posiciones := 0
+    
+    repetir 2
+      RecibirMensaje(id, *)
+      posiciones := posiciones + 1
+
+      si (posiciones = 1)
+        Informar('Robot ganador', id)
+
+    
+
+  fin 
+
+  robot corredor
+  variables 
+    id: numero
+    ok: boolean
+    av, ca: numero
+    flores, papeles: numero
+
+  comenzar
+
+    av := PosAv 
+    ca := PosCa
+    flores := 0
+    papeles := 0
+
+    RecibirMensaje(id, jefe)
+
+    mientras (HayFlorEnLaBolsa)
+      depositarFlor
+    mientras (HayPapelEnLaBolsa)
+      depositarPapel
+
+
+    RecibirMensaje(ok, jefe)
+
+    derecha
+    Pos(2, ca)
+     
+    repetir 18
+      si (HayFlorEnLaEsquina)
+        tomarFlor
+        flores := flores + 1
+      mover
+    si (HayFlorEnLaEsquina)
+      tomarFlor 
+      flores := flores + 1
+    
+    repetir flores
+      BloquearEsquina(1, 6)
+      Pos(1, 6)
+      depositarFlor
+      Pos(av, ca)
+      LiberarEsquina(1, 6)
+
+    EnviarMensaje(id, jefe)
+
+    RecibirMensaje(ok, jefe)
+    si (ok)
+      repetir 2
+        derecha
+      Pos(20, ca)
+      repetir 18
+        si (HayPapelEnLaEsquina)
+          tomarPapel
+          papeles := papeles + 1
+        mover
+      si (HayPapelEnLaEsquina)
+        tomarPapel 
+        papeles := papeles + 1
+
+      repetir papeles 
+        BloquearEsquina(1, 6)
+        Pos(1, 6)
+        depositarPapel 
+        Pos(av, ca)
+        LiberarEsquina(1, 6)
+
+
+      EnviarMensaje(id, jefe)
+        
+  fin
+
+variables
+  r1, r2, r3, r4: corredor 
+  jefe: fiscalizador
+comenzar 
+  AsignarArea(jefe, Esq5)
+  AsignarArea(r1, Esq1)
+  AsignarArea(r1, ETa)
+  AsignarArea(r1, Esq6)
+  AsignarArea(r2, Esq2)
+  AsignarArea(r2, ETb)
+  AsignarArea(r2, Esq6)
+  AsignarArea(r3, Esq3)
+  AsignarArea(r3, ETc)
+  AsignarArea(r3, Esq6)
+  AsignarArea(r4, Esq4)
+  AsignarArea(r4, ETd)
+  AsignarArea(r4, Esq6)
+  
+  Iniciar(r1, 1, 1)
+  Iniciar(r2, 1, 2)
+  Iniciar(r3, 1, 3)
+  Iniciar(r4, 1, 4)
+  Iniciar(jefe, 1, 5)
+  
+fin
