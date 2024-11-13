@@ -1,0 +1,133 @@
+{
+    Tres robots deben realizar 3 cuadrados cada uno, como se ejemplifica en la figura, juntando todas las flores que encuentran a su paso. El tamaño de cada cuadrado será determinado aleatoriamente entre 1 y 4 por cada robot. Al finalizar cada cuadrado, deberán depositar de a una todas las flores encontradas en la esquina (50,50). Cuando los robots terminan los 3 cuadrados, un robot coordinador deberá Informar qué robot recorrió más esquinas.
+
+    Los robots inician en las esquinas (1,1), (7,1), (14,1) y el robot coordinador en la esquina (51,51)
+}
+
+programa ex3
+procesos 
+  proceso juntarFlores(ES flo: numero)
+  comenzar 
+    mientras (HayFlorEnLaEsquina)
+      tomarFlor
+      flo := flo + 1
+  fin
+
+  proceso cuadrado(E lado: numero; ES flo: numero)
+  comenzar 
+    repetir 4
+      repetir lado 
+        juntarFlores(flo)
+        mover
+      derecha
+  fin
+
+areas 
+  AJ: AreaP(51, 51, 51, 51)
+  A1: AreaP(1, 1, 5, 15)
+  A2: AreaP(7, 1, 11, 15)
+  A3: AreaP(14, 1, 18, 15)
+  Ac: AreaPC(50, 50, 50, 50)
+
+robots 
+  robot servidor 
+  variables
+    id: numero
+    lado: numero
+    maxEsq, maxR, esq: numero
+
+  comenzar 
+    maxEsq := -1
+    maxR := -1
+
+    EnviarMensaje(1, r1)
+    EnviarMensaje(2, r2)
+    EnviarMensaje(3, r3)
+
+    repetir 9
+      Random(lado, 1, 4)
+      RecibirMensaje(id, *)
+      si (id = 1)
+        EnviarMensaje(lado, r1)
+      sino 
+        si (id = 2)
+          EnviarMensaje(lado, r2)
+        sino 
+          EnviarMensaje(lado, r3)
+
+    repetir 3
+      RecibirMensaje(id, *)
+      si (id = 1)
+        RecibirMensaje(esq, r1)
+        si (esq > maxEsq)
+          maxEsq := esq 
+          maxR := 1
+      sino 
+        si (id = 2)
+          RecibirMensaje(esq, r2)
+          si (esq > maxEsq)
+            maxEsq := esq 
+            maxR := 2
+        sino 
+          RecibirMensaje(esq, r3)
+          si (esq > maxEsq)
+            maxEsq := esq 
+            maxR := 3
+    Informar('Recorrio mas esquinas el robotito', maxR)
+  fin 
+
+  robot cliente 
+  variables 
+    id: numero
+    totEsq: numero
+    av, ca: numero
+    lado, flores: numero
+  comenzar
+    totEsq := 0
+    av := PosAv 
+    ca := PosCa
+
+    RecibirMensaje(id, srv)
+
+    repetir 2
+      EnviarMensaje(id, srv)
+      RecibirMensaje(lado, srv)
+
+      cuadrado(lado, flores)
+      totEsq := totEsq + (4 * lado)
+
+      Pos(PosAv, PosCa + lado + 1)
+    
+    EnviarMensaje(id, srv)
+    RecibirMensaje(lado, srv)
+    cuadrado(lado, flores)
+    totEsq := totEsq + (4 * lado)
+
+    repetir flores 
+      BloquearEsquina(50, 50)
+      Pos(50, 50)
+      depositarFlor
+      Pos(av, ca)
+      LiberarEsquina(50, 50)
+
+    EnviarMensaje(id, srv)
+    EnviarMensaje(totEsq, srv)
+    
+  fin 
+
+variables 
+  r1, r2, r3: cliente 
+  srv: servidor
+comenzar 
+  AsignarArea(srv, AJ)
+  AsignarArea(r1, Ac)
+  AsignarArea(r1, A1)
+  AsignarArea(r2, Ac)
+  AsignarArea(r2, A2)
+  AsignarArea(r3, Ac)
+  AsignarArea(r3, A3)
+  Iniciar(r1, 1, 1)
+  Iniciar(r2, 7, 1)
+  Iniciar(r3, 14, 1)
+  Iniciar(srv, 51, 51)
+fin
