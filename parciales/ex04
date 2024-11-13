@@ -1,4 +1,17 @@
-programa ex05
+{
+    Dos equipos de tres robots cada uno deben juntar todas las flores de un área asignada y llevarlas a la esquina (20,20). Cada robot, dentro de su área, recorre una calle asignada. Encada equipo hay dos robots "laterales" que recolectan las flores de su calle, depositándolas en la calle central del área (en la misma avenida donde las juntó). El tercer robot del equipo debe recorrer la calle central recolectando tanto las flores que ya habian en la calle como la depositadas por sus dos compañeros.
+    El robot central es el encargado de depositar todas las flores recolectadas en (20,20).
+    Un robot fiscalizador debe indicar qué equipo finalizó primero y cuál recolectó más flores.
+
+    Los robots del equipo azul (los de la izquierda) comienzan en (9,19), (9,20), (9,21). Los robots del equipo verde (los de la derecha) comienzan en (31,19), (31,20), (31,21). El fiscalizador se encuentra en (20,18).
+
+    Los robots del equipo azul hacen el recorrido desde la avenida 10 hasta la 19. Los robots del equipo verde hacen el recorrido desde la avenida 30 hasta la avenida 21.
+
+    Los robots deben asegurarse de recolectar todas las flores de su área.
+    Se debe maximizar la concurrencia.
+
+}
+programa ex04
 procesos
   proceso juntarFlores(ES flo: numero)
   comenzar
